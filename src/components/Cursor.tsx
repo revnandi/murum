@@ -1,21 +1,30 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import styles from './Cursor.module.css';
 
-function Cursor() {
+interface Props {
+  isHoveringImage: boolean;
+  cursorType: CursorContent;
+};
+
+type CursorContent = 'More' | '←' | '→' | 'Open';
+
+function Cursor({ isHoveringImage, cursorType }: Props) {
   const cursorRef = useRef<HTMLDivElement>(null);
 
   const addEventListeners = () => {
-    document.addEventListener("mousemove", handleMouseEvent);
+    document.addEventListener('mousemove', handleMouseEvent);
   };
 
   const removeEventListeners = () => {
-    document.removeEventListener("mousemove", handleMouseEvent);
+    document.removeEventListener('mousemove', handleMouseEvent);
   };
 
-  const handleMouseEvent = (e: MouseEvent) => {
-    const a = window.pageYOffset || document.documentElement.scrollTop;
+  let mouse = { x: 0, y: 0, scrollX: 0, scrollY: 0 };
 
+  const handleMouseEvent = (e: MouseEvent) => {
+    // const a = window.pageYOffset || document.documentElement.scrollTop;
+    // console.log(e)
     let boundingBoxWidth = 0;
     let boundingBoxHeight = 0;
 
@@ -24,26 +33,45 @@ function Cursor() {
       boundingBoxHeight = cursorRef.current.getBoundingClientRect().height;
     }
 
-    let posx = e.pageX,
-      posy = e.pageY - a;
+    let relX = e.pageX,
+    relY = e.pageY;
+
+    mouse.x = relX;
+    mouse.y = relY;
+    mouse.scrollX = scrollX;
+    mouse.scrollY = scrollY;
 
     gsap.to(cursorRef.current, {
       duration: 0.03,
-      x: posx - (boundingBoxWidth / 2 ),
-      y: posy - (boundingBoxHeight / 2 )
+      x: mouse.x + (scrollX - mouse.scrollX) - (boundingBoxWidth / 2 ),
+      y: mouse.y + (scrollY - mouse.scrollY) - (boundingBoxHeight / 2 )
     });
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     addEventListeners();
     return () => {
       removeEventListeners();
     }
   }, [])
 
+  useEffect(() => {
+    if (isHoveringImage) {
+      gsap.to(cursorRef.current, {
+        duration: 0.1,
+        opacity: 1
+      })
+    } else {
+      gsap.to(cursorRef.current, {
+        duration: 0.1,
+        opacity: 0
+      })
+    }
+  }, [isHoveringImage])
+
   return (
     <div className={ styles.Cursor } ref={ cursorRef }>
-      More
+      { cursorType }
     </div>
   )
 };

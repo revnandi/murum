@@ -13,4 +13,5 @@
   color: #fff;
   opacity: 0;
   pointer-events: none;
+  z-index: 2
 }

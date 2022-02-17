@@ -1,0 +1,15 @@
+.List {
+  display: flex;
+  list-style: none;
+}
+
+.Item {
+  margin-right: 2em;
+}
+
+.Link {
+  font-size: 1.875rem;
+  font-family: var(--font-secondary);
+  color: #000;
+  text-decoration: none;
+}

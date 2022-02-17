@@ -1,11 +1,13 @@
 .Box {
   position: absolute;
   top: 0;
-  left: 100%;
-  width: 100%;
+  left: calc(100% + (1.5rem / 2));
+  width: calc(100% - 1.5rem);
+  padding-right: 1rem;
 }
 
 .Title {
+  margin-top: 0;
   font-family: var(--font-secondary);
   font-size: 1.875rem;
 }
@@ -15,10 +17,31 @@
   font-size: 0.937rem;
 }
 
+.Tags {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.TagContainer {
+  width: 100%;
+}
+
+.TagContainer:nth-child(1), .TagContainer:nth-child(2) {
+  width: 50%;
+}
+
+.TagContainer:nth-child(1) .Tag, .TagContainer:nth-child(2) .Tag {
+  width: calc(100% - 1.25rem);
+}
+
 .Tag {
   position: relative;
   font-size: 0.937rem;
   display: block;
+  width: calc(50% - 1.25rem);
+  margin-left: auto;
+  margin-right: 1.25rem;
+  line-height: 1.5;
 }
 
 .Tag::after {
@@ -31,6 +54,11 @@
   background-color: #000;
 }
 
-.Tags {
-
+.CloseButton {
+  position: absolute;
+  right: 0;
+  margin: 0.5rem 0 0 0;
+  width: 1.562rem;
+  height: 1.562rem;
+  cursor: pointer;
 }

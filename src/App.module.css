@@ -1,3 +1,7 @@
+* {
+  box-sizing: border-box;
+}
+
 :root {
   --font-primary: "Founders Grotesk", sans-serif;
   --font-secondary: "Signifier", serif;
@@ -19,6 +23,23 @@
 
 .App {
   position: relative;
+  overflow-x: hidden;
+}
+
+.Header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 4;
+}
+
+.Footer {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  z-index: 4;
 }
 
 .ProjectsList {
@@ -34,4 +55,20 @@
   align-items: center;
   min-height: 100vh;
   width: 100%;
+}
+
+.ProjectsItemInner {
+  position: relative;
+  width: 100%;
+}
+
+.blur-up {
+  -webkit-filter: blur(5px);
+  filter: blur(5px);
+  transition: filter 400ms, -webkit-filter 400ms;
+}
+
+.blur-up.lazyloaded {
+  -webkit-filter: blur(0);
+  filter: blur(0);
 }
