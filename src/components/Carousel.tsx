@@ -12,10 +12,11 @@ type ClickPosition = 'none' | 'activate' | 'open' | 'prev' | 'next';
 interface Props {
   images?: Array<any>,
   passedFunctions: {
-    handleCursor: (value: boolean) => void
-    handleProjectClick: (value: number) => void
-    handleCursorChange: (value: CursorContent) => void
-    handleLightboxOpen: (value: any) => void
+    handleHover: (projectIndex: number | null) => void,
+    handleCursor: (value: boolean) => void,
+    handleProjectClick: (value: number) => void,
+    handleCursorChange: (value: CursorContent) => void,
+    handleLightboxOpen: (value: any) => void,
   },
   projectIndex: number,
   activeProjectIndex: number | null,
@@ -76,21 +77,29 @@ function Carousel({ images, passedFunctions, projectIndex, activeProjectIndex }:
     if (activeImage.current === totalImages.current - 1) {
       gsap.to(imageElements.current[activeImage.current] ,{
         opacity: 0,
-        duration: transitionDuration
+        duration: transitionDuration,
+        pointerEvents: 'none',
+        zIndex: 0
       });
       gsap.to(imageElements.current[0] ,{
         opacity: 1,
-        duration: transitionDuration
+        duration: transitionDuration,
+        pointerEvents: 'auto',
+        zIndex: 2
       });
       activeImage.current = 0;
     } else {
       gsap.to(imageElements.current[activeImage.current + 1] ,{
         opacity: 1,
-        duration: transitionDuration
+        duration: transitionDuration,
+        pointerEvents: 'auto',
+        zIndex: 2
       });
       gsap.to(imageElements.current[activeImage.current] ,{
         opacity: 0,
-        duration: transitionDuration
+        duration: transitionDuration,
+        pointerEvents: 'none',
+        zIndex: 0
       });
       activeImage.current = activeImage.current + 1;
     }
@@ -112,11 +121,13 @@ function Carousel({ images, passedFunctions, projectIndex, activeProjectIndex }:
   };
 
   const handleMouseLeave = () => {
+    passedFunctions.handleHover(null);
     passedFunctions.handleCursor(false);
     clickPosition.current = 'none';
   };
 
   const handleMouseMove = (e: any) => {
+    passedFunctions.handleHover(projectIndex);
     if (isActive.current) {
       if (images && images.length > 1) {
         if (e.target?.width * 0.25 >= e.offsetX) {
@@ -205,9 +216,20 @@ function Carousel({ images, passedFunctions, projectIndex, activeProjectIndex }:
   
 
   if(images) {
+    const renderPreview = () =>  {
+      return (
+      <picture className={ styles.PreviewImageContainer }>
+        <img
+          className={ [styles.PreviewImage, 'lazyload', 'blur-up'].join(' ') }
+          src={ `https://admin.murum.freizeit.hu/storage/uploads${images[0].value.sizes.lqip.path}` }
+          data-src={ `https://admin.murum.freizeit.hu/storage/uploads${images[0].value.sizes.medium.path}` }
+        />
+      </picture>
+    )};
+
     const renderImages = images.map(image => {
       return (
-        <div className={ styles.ImageContainer } key={ image.value._id }>
+        <picture className={ styles.ImageContainer } key={ image.value._id }>
           <img
             ref={ el => (imageElements.current = [...imageElements.current, el]) }
             className={ [styles.Image, 'lazyload', 'blur-up'].join(' ') }
@@ -218,12 +240,17 @@ function Carousel({ images, passedFunctions, projectIndex, activeProjectIndex }:
             height={ image.value.sizes.medium.height }
             onClick={ () => passedFunctions.handleProjectClick(projectIndex) }
           /> 
-        </div>)
+        </picture>)
     });
 
     return (
       <div className={ styles.Container }>
-        { renderImages }
+        { !isActive &&
+          renderPreview()
+        }
+        { isActive &&
+          renderImages
+        }
       </div>
     );
   } else {

@@ -29,3 +29,32 @@
   pointer-events: none;
   z-index: 0;
 }
+
+.Image {
+  display: block;
+  max-width:100%;
+  max-height:100%;
+  width: auto;
+  opacity:0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.PreviewImageContainer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: flex;
+  /* align-items: center;
+  justify-content: center; */
+  align-items: flex-start;
+  justify-content: flex-end;
+  aspect-ratio: 1 / 1;
+  width: 50%;
+}
+
+.PreviewImage {
+  display: block;
+  width: 100%;
+  height: auto;
+}

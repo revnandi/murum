@@ -1,0 +1,39 @@
+.Container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+}
+
+.Circle {
+  width: 4rem;
+  height: 4rem;
+  background-color: #000;
+
+  border-radius: 100%;  
+  -webkit-animation: scale-up 1.0s infinite ease-in-out;
+  animation: scale-up 1.0s infinite ease-in-out;
+}
+
+@-webkit-keyframes scale-up {
+  0% { -webkit-transform: scale(0) }
+  100% {
+    -webkit-transform: scale(1.0);
+    opacity: 0;
+  }
+}
+
+@keyframes scale-up {
+  0% { 
+    -webkit-transform: scale(0);
+    transform: scale(0);
+  } 100% {
+    -webkit-transform: scale(1.0);
+    transform: scale(1.0);
+    opacity: 0;
+  }
+}

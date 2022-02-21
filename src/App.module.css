@@ -56,7 +56,8 @@
   align-items: center;
   min-height: 100vh;
   /* width: 100%; */
-  width: 65.69444444444444%
+  /* width: 65.69444444444444%; */
+  width: 66.6666666%;
 }
 
 .ProjectsItemInner {

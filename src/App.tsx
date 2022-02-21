@@ -11,6 +11,7 @@ import InfoBox from './components/InfoBox';
 import Lightbox from './components/Lightbox';
 import Navigation from './components/Navigation';
 import Links from './components/Links';
+import Loader from './components/Loader';
 
 type CursorContent = 'More' | '←' | '→' | 'Open';
 
@@ -26,6 +27,7 @@ function App() {
   const [openedProject, setOpenedProject] = useState<number | null>(null);
   const [openedImage, setOpenedImage] = useState<any>(null);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+  const [hoveredProject, setHoveredProject] = useState<number | null>(null);
 
   const lightBoxFunctions = { 
     resetLightbox: () => {
@@ -35,6 +37,7 @@ function App() {
   };
 
   const carouselFunctions = {
+    handleHover: (projectIndex: number | null) => setHoveredProject(projectIndex),
     handleCursor: (value: boolean) => setCursorIsHoveringImage(value),
     handleProjectClick: (value: number) => {
       scrollToProject(value);
@@ -76,7 +79,7 @@ function App() {
   if (error) {
     return <div>Error</div>;
   } else if (!isLoaded) {
-    return <div>Loading...</div>;
+    return <Loader />;
   } else {
     const listProjects = projects.map((project: any, index: number) =>
       <li id={ `project_${index}` } className={ styles.ProjectsItem } key={ project._id }>
@@ -88,6 +91,7 @@ function App() {
               description={ project.description }
               tags={ project.tags }
               isOpen={ openedProject === index }
+              isHovered={ hoveredProject === index }
               passedFunctions={ infoBoxFunctions }
             />
         </div>
