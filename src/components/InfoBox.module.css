@@ -1,6 +1,6 @@
 .Box {
   position: absolute;
-  top: 0;
+  top: -0.5rem;
   left: calc(100% + (1.5rem / 2));
   width: calc(50%);
   max-width: 30rem;
@@ -9,6 +9,7 @@
 
 .Title {
   margin-top: 0;
+  margin-right: 3.25rem;
   font-family: var(--font-secondary);
   font-size: 1.875rem;
   font-weight: 400;
@@ -59,7 +60,7 @@
 .CloseButton {
   position: absolute;
   top: 0;
-  right: 0;
+  right: 1.25rem;
   margin: 0.5rem 1rem 0 0;
   width: 1.562rem;
   height: 1.562rem;

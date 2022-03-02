@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import 'lazysizes';
 import 'lazysizes/plugins/attrchange/ls.attrchange';
@@ -25,6 +25,7 @@ interface Props {
 
 function Carousel({ images, passedFunctions, projectIndex, activeProjectIndex }: Props) {
   const transitionDuration = 0.1;
+  const imagePreviewElement = useRef<any>(null);
   const imageElements = useRef(new Array());
   const totalImages = useRef(0);
   const activeImage = useRef(0);
@@ -127,6 +128,7 @@ function Carousel({ images, passedFunctions, projectIndex, activeProjectIndex }:
   };
 
   const handleMouseMove = (e: any) => {
+    // console.log(e);
     passedFunctions.handleHover(projectIndex);
     if (isActive.current) {
       if (images && images.length > 1) {
@@ -160,7 +162,7 @@ function Carousel({ images, passedFunctions, projectIndex, activeProjectIndex }:
         break;
       case 'activate':
         handleClickActivate();
-          break;
+        break;
       case 'open':
         handleClickOpen();
         break;
@@ -186,31 +188,65 @@ function Carousel({ images, passedFunctions, projectIndex, activeProjectIndex }:
   useEffect(() => {
     if (imageElements.current.length > 0) {
 
-      gsap.to(imageElements.current[0] ,{
-        opacity: 1,
-        pointerEvents: 'auto',
-        zIndex: 2
-      });
+      // gsap.to(imageElements.current[0] ,{
+      //   opacity: 1,
+      //   pointerEvents: 'auto',
+      //   zIndex: 2
+      // });
 
-      imageElements.current[0].style.opacity = 1;
+      // imageElements.current[0].style.opacity = 1;
       totalImages.current = imageElements.current.length;
 
       imageElements.current.forEach((imageElement, index) => {
         addImageEventListeners(imageElement, index);
-      })
-    }
+      });
+    };
+
+    if(images && images.length > 0) {
+      imagePreviewElement.current.addEventListener('mouseenter', handleMouseEnter);
+      imagePreviewElement.current.addEventListener('mouseleave', handleMouseLeave);
+      imagePreviewElement.current.addEventListener('mousemove', handleMouseMove);
+      imagePreviewElement.current.addEventListener('click', handleMouseClick);
+    };
 
     return () => {
       if (imageElements.current.length > 0) {
         imageElements.current.forEach((imageElement, index) => {
           removeImageEventListeners(imageElement, index);
-        })
+        });
+
+        imagePreviewElement.current.removeEventListener('mousemove', handleMouseMove);
       }
     }
   }, []);
 
   useEffect(() => {
     isActive.current = activeProjectIndex === projectIndex;
+    if(isActive.current) {
+      gsap.to(imagePreviewElement.current, {
+        opacity: 0,
+        pointerEvents: 'none',
+        zIndex: 0
+      });
+      gsap.to(imageElements.current[0], {
+        opacity: 1,
+        pointerEvents: 'auto',
+        zIndex: 2
+      });
+    } else {
+      gsap.to(imagePreviewElement.current, {
+        opacity: 1,
+        pointerEvents: 'auto',
+        zIndex: 1
+      });
+      gsap.to(imageElements.current[activeImage.current], {
+        opacity: 0,
+        pointerEvents: 'none',
+        zIndex: 0
+      });
+      activeImage.current = 0;
+    }
+
   }, [activeProjectIndex, projectIndex])
   
   
@@ -218,14 +254,16 @@ function Carousel({ images, passedFunctions, projectIndex, activeProjectIndex }:
   if(images) {
     const renderPreview = () =>  {
       return (
-      <picture className={ styles.PreviewImageContainer }>
-        <img
-          className={ [styles.PreviewImage, 'lazyload', 'blur-up'].join(' ') }
-          src={ `https://admin.murum.freizeit.hu/storage/uploads${images[0].value.sizes.lqip.path}` }
-          data-src={ `https://admin.murum.freizeit.hu/storage/uploads${images[0].value.sizes.medium.path}` }
-        />
-      </picture>
-    )};
+        <picture className={ styles.PreviewImageContainer }>
+          <img
+            ref={ imagePreviewElement }
+            className={ [styles.PreviewImage, 'lazyload', 'blur-up'].join(' ') }
+            src={ `https://admin.murum.freizeit.hu/storage/uploads${images[0].value.sizes.lqip.path}` }
+            data-src={ `https://admin.murum.freizeit.hu/storage/uploads${images[0].value.sizes.medium.path}` }
+          />
+        </picture>
+      )
+    };
 
     const renderImages = images.map(image => {
       return (
@@ -245,12 +283,8 @@ function Carousel({ images, passedFunctions, projectIndex, activeProjectIndex }:
 
     return (
       <div className={ styles.Container }>
-        { !isActive &&
-          renderPreview()
-        }
-        { isActive &&
-          renderImages
-        }
+        { renderPreview() }
+        { renderImages }
       </div>
     );
   } else {

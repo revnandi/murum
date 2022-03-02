@@ -11,6 +11,7 @@
   position: absolute;
   top: 0;
   right: 0;
+  /* display: none; */
   display: flex;
   /* align-items: center;
   justify-content: center; */
@@ -30,17 +31,8 @@
   z-index: 0;
 }
 
-.Image {
-  display: block;
-  max-width:100%;
-  max-height:100%;
-  width: auto;
-  opacity:0;
-  pointer-events: none;
-  z-index: 0;
-}
-
 .PreviewImageContainer {
+  z-index: 1;
   position: absolute;
   top: 0;
   right: 0;

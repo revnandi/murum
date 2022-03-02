@@ -53,7 +53,9 @@ function App() {
   };
 
   const infoBoxFunctions = {
-    resetActivateProject: () => setOpenedProject(null)
+    resetActivateProject: () => {
+      setOpenedProject(null);
+    }
   };
 
   const scrollToProject = (projectIndex: number) => {
