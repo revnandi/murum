@@ -30,7 +30,7 @@
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
+  width: calc(100% / 3);
   z-index: 4;
 }
 
@@ -45,8 +45,12 @@
 .ProjectsList {
   /* width: 33.3333%; */
   /* margin: 0 auto; */
+  display: flex;
+  flex-direction: column;
+  gap: 10rem;
+  width: calc(100% / 3);
   padding: 0;
-  margin: 0;
+  margin: 10rem auto;
 }
 
 .ProjectsItem {
@@ -54,10 +58,10 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
+  /* min-height: 100vh; */
   /* width: 100%; */
   /* width: 65.69444444444444%; */
-  width: 66.6666666%;
+  width: 100%;
 }
 
 .ProjectsItemInner {
@@ -74,4 +78,21 @@
 .blur-up.lazyloaded {
   -webkit-filter: blur(0);
   filter: blur(0);
+}
+
+.SubNavigation {
+  z-index: 4;
+  position: fixed;
+  bottom: 0;
+  display: flex;
+  justify-content: flex-end;
+  width: calc(100% / 3);
+}
+
+.SubNavigationLink {
+  margin-right: 0.25em;
+  font-size: 1.875rem;
+  font-family: var(--font-secondary);
+  color: #000;
+  text-decoration: none;
 }

@@ -2,8 +2,8 @@
   position: absolute;
   top: -0.5rem;
   left: calc(100% + (1.5rem / 2));
-  width: calc(50%);
-  max-width: 30rem;
+  width: 100%;
+  /* max-width: 30rem; */
   padding-right: 1rem;
 }
 
@@ -16,8 +16,15 @@
 }
 
 .Description {
+  margin-top: 2rem;
   font-family: var(--font-primary);
   font-size: 0.937rem;
+}
+
+.Description blockquote {
+  margin: 0;
+  font-family: var(--font-secondary);
+  font-size: 1.25rem;
 }
 
 .Tags {
@@ -39,6 +46,7 @@
 
 .Tag {
   position: relative;
+  font-family: var(--font-primary);
   font-size: 0.937rem;
   display: block;
   width: calc(50% - 1.25rem);

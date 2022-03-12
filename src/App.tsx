@@ -59,7 +59,17 @@ function App() {
   };
 
   const scrollToProject = (projectIndex: number) => {
-    gsap.to(window, {duration: 0.2, scrollTo: `#project_${projectIndex}`});
+    console.log(`#project_${projectIndex}`);
+    const element = document.getElementById(`project_${projectIndex}`)?.getBoundingClientRect();
+    console.log(window.innerHeight);
+    console.log(element);
+    if(element) {
+      const topOffset = () => {
+        return (window.innerHeight - element.height) / 2;
+      };
+
+      gsap.to(window, {duration: 0.2, scrollTo: {y: `#project_${projectIndex}`, offsetY: topOffset()}});
+    };
   };
 
   useEffect(() => {
@@ -111,6 +121,9 @@ function App() {
           { listProjects }
         </ul>
       </main>
+      <div className={ styles.SubNavigation }>
+        <a className={ styles.SubNavigationLink } href="/">Atelier News</a>
+      </div>
       <footer className={ styles.Footer }>
         <Links />
       </footer>

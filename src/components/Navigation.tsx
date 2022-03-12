@@ -9,9 +9,6 @@ function Navigation() {
           <li className={ styles.Item }>
             <a className={ styles.Link } href="/">Murum</a>
           </li>
-          <li className={ styles.Item }>
-            <a className={ styles.Link } href="/info">Info</a>
-          </li>
       </ul>
     </nav>
   )

@@ -1,12 +1,11 @@
 .List {
   display: flex;
+  justify-content: flex-end;
   list-style: none;
-  padding: 0.55rem 0;
-  margin: 0 0 0 33.333%;
 }
 
 .Item {
-  margin-right: 2em;
+  margin-right: 0.25em;
 }
 
 .Link {
