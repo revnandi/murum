@@ -13,7 +13,9 @@ import Navigation from './components/Navigation';
 import Links from './components/Links';
 import Loader from './components/Loader';
 
-type CursorContent = 'More' | '←' | '→' | 'Open';
+export type CursorContent = 'More' | '←' | '→' | 'Open';
+
+export type ClickPosition = 'none' | 'activate' | 'open' | 'prev' | 'next';
 
 type OpenedProject = number | null;
 
@@ -21,19 +23,33 @@ function App() {
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [projects, setProjects] = useState([]);
+  const [filteredProjects, setFilteredProjects] = useState<string[] | []>(projects);
 
   const [cursorIsHoveringImage, setCursorIsHoveringImage] = useState(false);
   const [cursorType, setCursorType] = useState<CursorContent>('More')
   const [openedProject, setOpenedProject] = useState<number | null>(null);
-  const [openedImage, setOpenedImage] = useState<any>(null);
+  const [openedImages, setOpenedImages] = useState<any>(null);
+  const [openedImageIndex, setOpenedImageIndex] = useState<number>(0);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [hoveredProject, setHoveredProject] = useState<number | null>(null);
+  const [activeTags, setActiveTags] = useState<string[] | []>([]);
 
   const lightBoxFunctions = { 
-    resetLightbox: () => {
-      setOpenedImage(null);
-      setIsLightboxOpen(false);
-    }
+    resetLightbox: (e: React.MouseEvent<HTMLElement>) => {
+      e.preventDefault();
+
+
+      if(e.target === e.currentTarget) {
+        setIsLightboxOpen(false);
+        setOpenedImages(null);
+        setOpenedImageIndex(0);
+        document.body.style.overflow = "auto";
+     }
+    },
+    handleCursor: (value: boolean) => setCursorIsHoveringImage(value),
+    handleCursorChange: (value: 'More' | '←' | '→' | 'Open') => {
+      setCursorType(value);
+    },
   };
 
   const carouselFunctions = {
@@ -46,9 +62,11 @@ function App() {
     handleCursorChange: (value: 'More' | '←' | '→' | 'Open') => {
       setCursorType(value);
     },
-    handleLightboxOpen: (value: any) => {
-      setOpenedImage(value);
+    handleLightboxOpen: (images: any, indexOfClicked: number) => {
+      setOpenedImages(images);
+      setOpenedImageIndex(indexOfClicked);
       setIsLightboxOpen(true);
+      document.body.style.overflow = "hidden";
     }
   };
 
@@ -59,10 +77,7 @@ function App() {
   };
 
   const scrollToProject = (projectIndex: number) => {
-    console.log(`#project_${projectIndex}`);
     const element = document.getElementById(`project_${projectIndex}`)?.getBoundingClientRect();
-    console.log(window.innerHeight);
-    console.log(element);
     if(element) {
       const topOffset = () => {
         return (window.innerHeight - element.height) / 2;
@@ -72,8 +87,21 @@ function App() {
     };
   };
 
+  const filterProjects = (projectsToFilter: string[] | []) => {
+    // Avoid filter for empty string
+    console.log(activeTags);
+    if (activeTags.length === 0) {
+      return projects;
+    }
+
+    const filtered = projectsToFilter.filter(
+      (project: any) => activeTags.some(r => project.tags.includes(r))
+    );
+    return filtered;
+  };
+
   useEffect(() => {
-    fetch(`https://admin.murum.freizeit.hu/api/collections/get/projects?token=d165676ef94977d5aaab5ea7af6efc`)
+    fetch(`https://admin.murum.studio/api/collections/get/projects?token=b4feea70ee9842384135e890083a04`)
       .then(res => res.json())
       .then(
         (result) => {
@@ -87,13 +115,18 @@ function App() {
       )
   }, []);
 
+  useEffect(() => {
+    const projectsToFilter = filterProjects(projects);
+    setFilteredProjects(projectsToFilter);
+  }, [projects, activeTags]);
+
 
   if (error) {
     return <div>Error</div>;
   } else if (!isLoaded) {
     return <Loader />;
   } else {
-    const listProjects = projects.map((project: any, index: number) =>
+    const listProjects = filteredProjects.map((project: any, index: number) =>
       <li id={ `project_${index}` } className={ styles.ProjectsItem } key={ project._id }>
         <div className={ styles.ProjectsItemInner }>
           <Carousel images={ project.images } projectIndex={ index } passedFunctions={ carouselFunctions } activeProjectIndex={ openedProject } isActive={ openedProject === index }/>
@@ -127,7 +160,7 @@ function App() {
       <footer className={ styles.Footer }>
         <Links />
       </footer>
-      <Lightbox isOpen={ isLightboxOpen } image={ openedImage } passedFunctions={ lightBoxFunctions }/>
+      <Lightbox isOpen={ isLightboxOpen } images={ openedImages } clickedImageIndex={ openedImageIndex } passedFunctions={ lightBoxFunctions }/>
       <Cursor isHoveringImage={ cursorIsHoveringImage } cursorType={ cursorType } />
     </div>
     );

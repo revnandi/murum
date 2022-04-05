@@ -5,18 +5,18 @@ import 'lazysizes/plugins/attrchange/ls.attrchange';
 import 'lazysizes/plugins/blur-up/ls.blur-up';
 import styles from './Carousel.module.css';
 
-type CursorContent = 'More' | '←' | '→' | 'Open';
+import { CursorContent } from '../App';
 
-type ClickPosition = 'none' | 'activate' | 'open' | 'prev' | 'next';
+import { ClickPosition } from '../App';
 
 interface Props {
   images?: Array<any>,
   passedFunctions: {
     handleHover: (projectIndex: number | null) => void,
     handleCursor: (value: boolean) => void,
-    handleProjectClick: (value: number) => void,
     handleCursorChange: (value: CursorContent) => void,
-    handleLightboxOpen: (value: any) => void,
+    handleProjectClick: (value: number) => void,
+    handleLightboxOpen: (images: any, indexOfClicked: number) => void,
   },
   projectIndex: number,
   activeProjectIndex: number | null,
@@ -37,8 +37,8 @@ function Carousel({ images, passedFunctions, projectIndex, activeProjectIndex }:
   };
 
   const handleClickOpen = () => {
-    if(images && images.length > 0) {
-      passedFunctions.handleLightboxOpen(images[activeImage.current])
+    if(images && images.length > 0) {
+      passedFunctions.handleLightboxOpen(images, activeImage.current)
     }
   };
 
@@ -128,7 +128,6 @@ function Carousel({ images, passedFunctions, projectIndex, activeProjectIndex }:
   };
 
   const handleMouseMove = (e: any) => {
-    // console.log(e);
     passedFunctions.handleHover(projectIndex);
     if (isActive.current) {
       if (images && images.length > 1) {
@@ -178,6 +177,7 @@ function Carousel({ images, passedFunctions, projectIndex, activeProjectIndex }:
     imageElement.addEventListener('mousemove', handleMouseMove);
     imageElement.addEventListener('click', handleMouseClick);
   };
+
   const removeImageEventListeners = (imageElement: HTMLImageElement, index: number) => {
     imageElement.removeEventListener('mouseenter', handleMouseEnter);
     imageElement.removeEventListener('mouseleave', handleMouseLeave);
@@ -258,8 +258,8 @@ function Carousel({ images, passedFunctions, projectIndex, activeProjectIndex }:
           <img
             ref={ imagePreviewElement }
             className={ [styles.PreviewImage, 'lazyload', 'blur-up'].join(' ') }
-            src={ `https://admin.murum.freizeit.hu/storage/uploads${images[0].value.sizes.lqip.path}` }
-            data-src={ `https://admin.murum.freizeit.hu/storage/uploads${images[0].value.sizes.medium.path}` }
+            src={ `https://admin.murum.studio/storage/uploads${images[0].value.sizes.lqip.path}` }
+            data-src={ `https://admin.murum.studio/storage/uploads${images[0].value.sizes.medium.path}` }
           />
         </picture>
       )
@@ -271,8 +271,8 @@ function Carousel({ images, passedFunctions, projectIndex, activeProjectIndex }:
           <img
             ref={ el => (imageElements.current = [...imageElements.current, el]) }
             className={ [styles.Image, 'lazyload', 'blur-up'].join(' ') }
-            src={ `https://admin.murum.freizeit.hu/storage/uploads${image.value.sizes.lqip.path}` }
-            data-src={ `https://admin.murum.freizeit.hu/storage/uploads${image.value.sizes.medium.path}` }
+            src={ `https://admin.murum.studio/storage/uploads${image.value.sizes.lqip.path}` }
+            data-src={ `https://admin.murum.studio/storage/uploads${image.value.sizes.medium.path}` }
             alt=""
             width={ image.value.sizes.medium.width }
             height={ image.value.sizes.medium.height }
