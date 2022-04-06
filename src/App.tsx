@@ -5,6 +5,9 @@ gsap.registerPlugin(ScrollToPlugin);
 import './fonts/test-signifier-regular.woff';
 import './fonts/test-founders-grotesk-regular.woff';
 import styles from './App.module.css';
+
+import useStore from './store';
+
 import Carousel from './components/Carousel';
 import Cursor from './components/Cursor';
 import InfoBox from './components/InfoBox';
@@ -12,6 +15,7 @@ import Lightbox from './components/Lightbox';
 import Navigation from './components/Navigation';
 import Links from './components/Links';
 import Loader from './components/Loader';
+import Filters from './components/Filters';
 
 export type CursorContent = 'More' | '←' | '→' | 'Open';
 
@@ -20,19 +24,30 @@ export type ClickPosition = 'none' | 'activate' | 'open' | 'prev' | 'next';
 type OpenedProject = number | null;
 
 function App() {
+  const {
+    allProjects,
+    setAllProjects,
+    filteredProjects,
+    setFilteredProjects,
+    activeTags,
+    setActiveTags,
+    openedProject,
+    setOpenedProject
+  } = useStore();
+
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
-  const [projects, setProjects] = useState([]);
-  const [filteredProjects, setFilteredProjects] = useState<string[] | []>(projects);
+  // const [projects, setProjects] = useState([]);
+  // const [filteredProjects, setFilteredProjects] = useState<string[] | []>(projects);
 
   const [cursorIsHoveringImage, setCursorIsHoveringImage] = useState(false);
   const [cursorType, setCursorType] = useState<CursorContent>('More')
-  const [openedProject, setOpenedProject] = useState<number | null>(null);
+  // const [openedProject, setOpenedProject] = useState<number | null>(null);
   const [openedImages, setOpenedImages] = useState<any>(null);
   const [openedImageIndex, setOpenedImageIndex] = useState<number>(0);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [hoveredProject, setHoveredProject] = useState<number | null>(null);
-  const [activeTags, setActiveTags] = useState<string[] | []>([]);
+  // const [activeTags, setActiveTags] = useState<string[] | []>([]);
 
   const lightBoxFunctions = { 
     resetLightbox: (e: React.MouseEvent<HTMLElement>) => {
@@ -91,7 +106,7 @@ function App() {
     // Avoid filter for empty string
     console.log(activeTags);
     if (activeTags.length === 0) {
-      return projects;
+      return allProjects;
     }
 
     const filtered = projectsToFilter.filter(
@@ -106,7 +121,8 @@ function App() {
       .then(
         (result) => {
           setIsLoaded(true);
-          setProjects(result.entries);
+          setAllProjects(result.entries);
+          // setProjects(result.entries);
         },
         (error) => {
           setIsLoaded(true);
@@ -116,9 +132,9 @@ function App() {
   }, []);
 
   useEffect(() => {
-    const projectsToFilter = filterProjects(projects);
+    const projectsToFilter = filterProjects(allProjects);
     setFilteredProjects(projectsToFilter);
-  }, [projects, activeTags]);
+  }, [allProjects, activeTags]);
 
 
   if (error) {
@@ -153,6 +169,7 @@ function App() {
         <ul className={ styles.ProjectsList }>
           { listProjects }
         </ul>
+        <Filters />
       </main>
       <div className={ styles.SubNavigation }>
         <a className={ styles.SubNavigationLink } href="/">Atelier News</a>

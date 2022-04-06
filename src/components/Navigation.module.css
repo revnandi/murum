@@ -1,14 +1,17 @@
+.Navigation {
+  grid-column: 1 / span 5;
+  margin-left: 1.25rem;
+}
+
 .List {
   display: flex;
-  justify-content: flex-end;
   list-style: none;
+  gap: 1.875rem;
+  padding: 0;
 }
 
 .Item {
   margin-right: 0.25em;
-}
-
-.Link {
   font-size: 1.875rem;
   font-family: var(--font-secondary);
   color: #000;

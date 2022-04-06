@@ -1,0 +1,20 @@
+.List {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: flex-end;
+  gap: 20px;
+  grid-column: 10 / span 5;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.Item {
+  font-family: var(--font-primary);
+  font-size: 0.937rem;
+  line-height: 1.2em;
+  color: #000;
+  text-decoration: none;
+}

@@ -6,9 +6,9 @@ function Navigation() {
   return (
     <nav className={ styles.Navigation }>
       <ul className={ styles.List }>
-          <li className={ styles.Item }>
-            <a className={ styles.Link } href="/">Murum</a>
-          </li>
+          <li className={ styles.Item }>Murum</li>
+          <li className={ styles.Item }>About</li>
+          <li className={ styles.Item }>Research</li>
       </ul>
     </nav>
   )
