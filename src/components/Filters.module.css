@@ -1,14 +1,28 @@
 .List {
   position: fixed;
-  right: 0;
-  bottom: 0;
+  right: 1.25rem;
+  bottom: 0.875rem;
   display: flex;
   justify-content: flex-end;
-  gap: 20px;
+  gap: 1.25rem;
   grid-column: 10 / span 5;
   margin: 0;
   padding: 0;
   list-style: none;
+}
+
+@media only screen and (max-width: 768px) {
+  .List {
+    z-index: 5;
+    top: 80px;
+    bottom: unset;
+    left: 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.5rem 0.25rem;
+    width: 100%;
+    padding: 20px;
+  }
 }
 
 .Item {
@@ -17,4 +31,20 @@
   line-height: 1.2em;
   color: #000;
   text-decoration: none;
+  cursor: pointer;
 }
+
+@media only screen and (max-width: 768px) {
+  .Item {
+    font-size: 1.187rem;
+    line-height: 1.157em;
+  }
+}
+
+.Item:hover {
+  opacity: 0.85;
+}
+
+.ItemActive {
+ text-decoration: underline;
+} 

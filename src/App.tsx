@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { gsap } from 'gsap';
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
 gsap.registerPlugin(ScrollToPlugin);
-import './fonts/test-signifier-regular.woff';
-import './fonts/test-founders-grotesk-regular.woff';
 import styles from './App.module.css';
 
 import useStore from './store';
@@ -13,9 +12,9 @@ import Cursor from './components/Cursor';
 import InfoBox from './components/InfoBox';
 import Lightbox from './components/Lightbox';
 import Navigation from './components/Navigation';
-import Links from './components/Links';
 import Loader from './components/Loader';
 import Filters from './components/Filters';
+import PageContent from './components/PageContent';
 
 export type CursorContent = 'More' | '←' | '→' | 'Open';
 
@@ -32,8 +31,13 @@ function App() {
     activeTags,
     setActiveTags,
     openedProject,
-    setOpenedProject
+    setOpenedProject,
+    openedPage,
+    setOpenedPage
   } = useStore();
+
+  let { slug } = useParams();
+  let navigate = useNavigate();
 
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -49,17 +53,17 @@ function App() {
   const [hoveredProject, setHoveredProject] = useState<number | null>(null);
   // const [activeTags, setActiveTags] = useState<string[] | []>([]);
 
-  const lightBoxFunctions = { 
+  const lightBoxFunctions = {
     resetLightbox: (e: React.MouseEvent<HTMLElement>) => {
       e.preventDefault();
 
 
-      if(e.target === e.currentTarget) {
+      if (e.target === e.currentTarget) {
         setIsLightboxOpen(false);
         setOpenedImages(null);
         setOpenedImageIndex(0);
         document.body.style.overflow = "auto";
-     }
+      }
     },
     handleCursor: (value: boolean) => setCursorIsHoveringImage(value),
     handleCursorChange: (value: 'More' | '←' | '→' | 'Open') => {
@@ -70,7 +74,8 @@ function App() {
   const carouselFunctions = {
     handleHover: (projectIndex: number | null) => setHoveredProject(projectIndex),
     handleCursor: (value: boolean) => setCursorIsHoveringImage(value),
-    handleProjectClick: (value: number) => {
+    handleProjectClick: (value: number, slug: string) => {
+      navigate(`/${slug}`);
       scrollToProject(value);
       setOpenedProject(value);
     },
@@ -93,18 +98,18 @@ function App() {
 
   const scrollToProject = (projectIndex: number) => {
     const element = document.getElementById(`project_${projectIndex}`)?.getBoundingClientRect();
-    if(element) {
+    if (element) {
       const topOffset = () => {
         return (window.innerHeight - element.height) / 2;
       };
 
-      gsap.to(window, {duration: 0.2, scrollTo: {y: `#project_${projectIndex}`, offsetY: topOffset()}});
+      gsap.to(window, { duration: 0.2, scrollTo: { y: `#project_${projectIndex}`, offsetY: topOffset() } });
     };
   };
 
   const filterProjects = (projectsToFilter: string[] | []) => {
     // Avoid filter for empty string
-    console.log(activeTags);
+    // console.log(activeTags);
     if (activeTags.length === 0) {
       return allProjects;
     }
@@ -136,50 +141,72 @@ function App() {
     setFilteredProjects(projectsToFilter);
   }, [allProjects, activeTags]);
 
+  useEffect(() => {
+    if(slug) {
+      console.log(allProjects);
+      console.log(allProjects.findIndex((project: any) => project.title_slug === slug));
+      const projectIndexToSet = allProjects.findIndex((project: any) => project.title_slug === slug);
+      if(projectIndexToSet) {
+        setOpenedProject(projectIndexToSet);
+        setTimeout(() => {
+          scrollToProject(projectIndexToSet);
+        }, 100);
+      };
+    }
+
+    // setOpenedProject()
+  }, [isLoaded, allProjects]);
+
 
   if (error) {
     return <div>Error</div>;
   } else if (!isLoaded) {
     return <Loader />;
   } else {
-    const listProjects = filteredProjects.map((project: any, index: number) =>
-      <li id={ `project_${index}` } className={ styles.ProjectsItem } key={ project._id }>
-        <div className={ styles.ProjectsItemInner }>
-          <Carousel images={ project.images } projectIndex={ index } passedFunctions={ carouselFunctions } activeProjectIndex={ openedProject } isActive={ openedProject === index }/>
+    const listProjects = filteredProjects.map((project: any, index: number) => {
+
+      return <li id={`project_${index}`} className={styles.ProjectsItem} key={project._id}>
+        <div className={styles.ProjectsItemInner}>
+          <Carousel
+            images={project.images}
+            projectIndex={index}
+            projectSlug={ project.title_slug }
+            passedFunctions={carouselFunctions}
+            activeProjectIndex={openedProject}
+            isActive={openedProject === index}
+          />
           <InfoBox
-              id={ project._id }
-              title={ project.title }
-              description={ project.description }
-              tags={ project.tags }
-              isOpen={ openedProject === index }
-              isHovered={ hoveredProject === index }
-              passedFunctions={ infoBoxFunctions }
-            />
+            id={project._id}
+            title={project.title}
+            description={project.description}
+            specs={project.specs}
+            tags={project.tags}
+            isOpen={openedProject === index}
+            isHovered={hoveredProject === index}
+            passedFunctions={infoBoxFunctions}
+          />
         </div>
       </li>
+    }
     );
 
-
-    return (
-    <div className={ styles.App }>
-      <header  className={ styles.Header }>
-        <Navigation />
-      </header>
-      <main className={ styles.Main }>
-        <ul className={ styles.ProjectsList }>
-          { listProjects }
-        </ul>
-        <Filters />
-      </main>
-      <div className={ styles.SubNavigation }>
-        <a className={ styles.SubNavigationLink } href="/">Atelier News</a>
+    return (  
+      <div className={styles.App}>
+        <header className={styles.Header}>
+          <Navigation />
+        </header>
+        <main className={styles.Main}>
+          <Filters />
+          {openedPage &&
+            <PageContent />
+          }
+          <ul className={styles.ProjectsList}>
+            {listProjects}
+          </ul>
+        </main>
+        <Lightbox isOpen={isLightboxOpen} images={openedImages} clickedImageIndex={openedImageIndex} passedFunctions={lightBoxFunctions} />
+        <Cursor isHoveringImage={cursorIsHoveringImage} cursorType={cursorType} />
       </div>
-      <footer className={ styles.Footer }>
-        <Links />
-      </footer>
-      <Lightbox isOpen={ isLightboxOpen } images={ openedImages } clickedImageIndex={ openedImageIndex } passedFunctions={ lightBoxFunctions }/>
-      <Cursor isHoveringImage={ cursorIsHoveringImage } cursorType={ cursorType } />
-    </div>
     );
   }
 }

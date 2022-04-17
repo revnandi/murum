@@ -4,12 +4,19 @@ import { devtools } from 'zustand/middleware';
 interface PortfolioState {
   allProjects: [];
   setAllProjects: (projets: []) => void;
+
   filteredProjects: string[];
   setFilteredProjects: (filteredProjects: string[]) => void;
+
   activeTags: string[];
   setActiveTags: (activeTags: string[]) => void;
+
   openedProject: number | null;
   setOpenedProject: (id: number | null) => void;
+
+  openedPage: string | null;
+  setOpenedPage: (slug: string | null) => void;
+
   // lightboxisVisible: boolean;
 };
 
@@ -41,6 +48,13 @@ const useStore = create<PortfolioState>(devtools((set) => ({
     ...state,
     openedProject
   })),
+
+  openedPage: null,
+  setOpenedPage: (openedPage:  string | null) =>
+  set((state) => ({
+    ...state,
+    openedPage
+  }))
 
 })));
 

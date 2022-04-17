@@ -1,19 +1,8 @@
 import { useEffect, useState } from 'react';
 import styles from './InfoBox.module.css';
+import ProjectInfo from '../models/ProjectInfo';
 
-interface Props {
-  id: string,
-  title: string;
-  description: string,
-  tags: Array<string>,
-  isOpen: boolean,
-  isHovered: boolean,
-  passedFunctions: {
-    resetActivateProject: () => void
-  }
-}
-
-function InfoBox({ id, title, description, tags, isOpen, isHovered, passedFunctions }: Props) {
+function InfoBox({ id, title, description, specs, tags, isOpen, isHovered, passedFunctions }: ProjectInfo) {
   // let [isHovered, setIsHovered] = useState(false);
 
   const handleMouseEnter = (e: any) => {
@@ -23,14 +12,6 @@ function InfoBox({ id, title, description, tags, isOpen, isHovered, passedFuncti
   const handleMouseLEave = (e: any) => {
     isHovered = false;
   };
-
-  // useEffect(() => {
-  //   Box.add
-  
-  //   return () => {
-  //     second
-  //   }
-  // }, [third])
   
 
   const renderTags = tags.map((tag, index) => 
@@ -53,6 +34,7 @@ function InfoBox({ id, title, description, tags, isOpen, isHovered, passedFuncti
             { renderTags}
           </div>
           <div className={ styles.Description } dangerouslySetInnerHTML={{ __html: description }}></div>
+          <div className={ styles.Specs } dangerouslySetInnerHTML={{ __html: specs }}></div>
         </> 
       }
     </div>

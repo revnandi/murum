@@ -55,33 +55,33 @@ function Lightbox({ isOpen, images, clickedImageIndex, passedFunctions }: Props)
 
   const handleClickPrev = () => {
     if (currentClickedIndex === 0) {
-      console.log("handleClickPrev");
-      console.log("currentClickedIndex before change: " + currentClickedIndex);
+      // console.log("handleClickPrev");
+      // console.log("currentClickedIndex before change: " + currentClickedIndex);
       let indexOfLastImage = images.length - 1;
-      console.log(indexOfLastImage);
+      // console.log(indexOfLastImage);
       setCurrentClickedIndex(indexOfLastImage);
-      console.log("currentClickedIndex after change: " + currentClickedIndex);
+      // console.log("currentClickedIndex after change: " + currentClickedIndex);
     } else {
-      console.log("handleClickPrev else");
-      console.log("currentClickedIndex before change: " + currentClickedIndex);
+      // console.log("handleClickPrev else");
+      // console.log("currentClickedIndex before change: " + currentClickedIndex);
       setCurrentClickedIndex(currentClickedIndex--);
-      console.log("currentClickedIndex after change: " + currentClickedIndex);
+      // console.log("currentClickedIndex after change: " + currentClickedIndex);
     }
   };
 
   const handleClickNext = () => {
     if (currentClickedIndex === images.length - 1) {
-      console.log("handleClickNext");
-      console.log("currentClickedIndex before change: " + currentClickedIndex);
+      // console.log("handleClickNext");
+      // console.log("currentClickedIndex before change: " + currentClickedIndex);
       setCurrentClickedIndex(0);
-      console.log("currentClickedIndex after change: " + currentClickedIndex);
+      // console.log("currentClickedIndex after change: " + currentClickedIndex);
     } else {
-      console.log("handleClickNext else");
-      console.log("currentClickedIndex before change: " + currentClickedIndex);
+      // console.log("handleClickNext else");
+      // console.log("currentClickedIndex before change: " + currentClickedIndex);
       // let currentIndex = currentClickedIndex;
       // currentIndex++;
       setCurrentClickedIndex(currentClickedIndex++);
-      console.log("currentClickedIndex after change: " + currentClickedIndex);
+      // console.log("currentClickedIndex after change: " + currentClickedIndex);
     }
   };
 
@@ -111,16 +111,16 @@ function Lightbox({ isOpen, images, clickedImageIndex, passedFunctions }: Props)
   };
 
   useEffect(() => {
-    console.log("useEffect [clickedImageIndex ]");
+    // console.log("useEffect [clickedImageIndex ]");
   }, [clickedImageIndex]);
   
   useEffect(() => {
-    console.log("useEffect []");
+    // console.log("useEffect []");
     setCurrentClickedIndex(clickedImageIndex);
   }, []);
   
   useEffect(() => {
-    console.log("useEffect [isOpen]");
+    // console.log("useEffect [isOpen]");
     setCurrentClickedIndex(clickedImageIndex);
     if(bigImage.current) {
       addImageEventListeners(bigImage.current);

@@ -1,0 +1,1 @@
+export type CursorContent = 'More' | '←' | '→' | 'Open';

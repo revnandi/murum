@@ -1,47 +1,100 @@
 .Box {
-  position: absolute;
-  top: -0.5rem;
-  left: calc(100% + (1.5rem / 2));
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1.25rem;
+  grid-column: 5  / span 5;
   width: 100%;
-  /* max-width: 30rem; */
   padding-right: 1rem;
 }
 
+@media only screen and (max-width: 768px) {
+  .Box {
+    grid-template-areas: "title title title title title"
+    "tags tags specs specs specs"
+    "description description description description description";
+    padding: 0;
+  }
+}
+
 .Title {
+  grid-column: 1 / span 2;
   margin-top: 0;
-  margin-right: 3.25rem;
   font-family: var(--font-secondary);
   font-size: 1.875rem;
   font-weight: 400;
+  line-height: 1.166em;
+}
+
+@media only screen and (max-width: 768px) {
+  .Title {
+    grid-area: title;
+    padding-right: 1.5rem;
+    margin-top: 0.312rem;
+    margin-bottom: 0;
+  }
 }
 
 .Description {
-  margin-top: 2rem;
+  grid-column: 3 / span 3;
   font-family: var(--font-primary);
   font-size: 0.937rem;
+}
+
+@media only screen and (max-width: 768px) {
+  .Description {
+    grid-area: description;
+    margin-top: 1rem;
+  }
 }
 
 .Description blockquote {
   margin: 0;
   font-family: var(--font-secondary);
-  font-size: 1.25rem;
+  font-size: 1.125rem;
+}
+
+.Description blockquote p {
+  margin-top: 0;
+}
+
+.Specs {
+  grid-column: 1 / span 2;
+  align-self: end;
+  font-family: var(--font-primary);
+  font-size: 0.937rem;
+  line-height: 1.2em;
+}
+
+@media only screen and (max-width: 768px) {
+  .Specs {
+    grid-area: specs;
+  }
+}
+
+.Specs p:last-child {
+  margin-bottom:0
 }
 
 .Tags {
   display: flex;
   flex-wrap: wrap;
+  grid-column: 1 / span 2;
+  align-self: baseline;
+}
+
+@media only screen and (max-width: 768px) {
+  .Tags {
+    grid-area: tags;
+  }
 }
 
 .TagContainer {
   width: 100%;
 }
 
-.TagContainer:nth-child(1), .TagContainer:nth-child(2) {
-  width: 50%;
-}
-
-.TagContainer:nth-child(1) .Tag, .TagContainer:nth-child(2) .Tag {
-  width: calc(100% - 1.25rem);
+.TagContainer:nth-child(2) {
+  margin-top: 0.625rem;
 }
 
 .Tag {
@@ -49,28 +102,26 @@
   font-family: var(--font-primary);
   font-size: 0.937rem;
   display: block;
-  width: calc(50% - 1.25rem);
-  margin-left: auto;
   margin-right: 1.25rem;
-  line-height: 1.5;
-}
-
-.Tag::after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 1px;
-  background-color: #000;
+  line-height: 1.2em;
+  text-transform: capitalize;
 }
 
 .CloseButton {
   position: absolute;
   top: 0;
-  right: 1.25rem;
-  margin: 0.5rem 1rem 0 0;
-  width: 1.562rem;
-  height: 1.562rem;
+  right: 1rem;
+  margin: 0;
+  width: 1rem;
+  height: 1rem;
   cursor: pointer;
+}
+
+@media only screen and (max-width: 768px) {
+  .CloseButton {
+    top: 0.5rem;
+    right: 0rem;
+    width: 1.5rem;
+    height: 1.5rem;
+  }
 }

@@ -11,9 +11,39 @@
 }
 
 .Item {
+  position: relative;
   margin-right: 0.25em;
   font-size: 1.875rem;
   font-family: var(--font-secondary);
   color: #000;
   text-decoration: none;
+  cursor: pointer;
+}
+
+.SubList {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  display: none;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.SubItem {
+  margin-top: 0.666em;
+  font-size: 0.937rem;
+  line-height: 1.2em;
+}
+
+.Item:hover .SubList {
+  display: block;
+}
+
+.SubItem {
+  cursor: pointer;
+}
+
+.SubItem:hover {
+  text-decoration: underline;
 }

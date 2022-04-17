@@ -10,20 +10,199 @@
 @font-face {
   font-family: "Signifier";
   src: local("Signifier"),
-   url("./fonts/test-signifier-regular.woff") format("woff");
+   url("./fonts/signifier-thin.woff") format("woff");
+  font-weight: 100;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Signifier";
+  src: local("Signifier"),
+   url("./fonts/signifier-thin-italic.woff") format("woff");
+  font-weight: 100;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "Signifier";
+  src: local("Signifier"),
+   url("./fonts/signifier-extralight.woff") format("woff");
+  font-weight: 200;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Signifier";
+  src: local("Signifier"),
+   url("./fonts/signifier-extralight-italic.woff") format("woff");
+  font-weight: 200;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "Signifier";
+  src: local("Signifier"),
+   url("./fonts/signifier-light.woff") format("woff");
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Signifier";
+  src: local("Signifier"),
+   url("./fonts/signifier-light-italic.woff") format("woff");
+  font-weight: 300;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "Signifier";
+  src: local("Signifier"),
+   url("./fonts/signifier-regular.woff") format("woff");
   font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Signifier";
+  src: local("Signifier"),
+   url("./fonts/signifier-regular-italic.woff") format("woff");
+  font-weight: 400;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "Signifier";
+  src: local("Signifier"),
+   url("./fonts/signifier-medium.woff") format("woff");
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Signifier";
+  src: local("Signifier"),
+   url("./fonts/signifier-medium-italic.woff") format("woff");
+  font-weight: 500;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "Signifier";
+  src: local("Signifier"),
+   url("./fonts/signifier-bold.woff") format("woff");
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Signifier";
+  src: local("Signifier"),
+   url("./fonts/signifier-bold-italic.woff") format("woff");
+  font-weight: 700;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "Signifier";
+  src: local("Signifier"),
+   url("./fonts/signifier-black.woff") format("woff");
+  font-weight: 900;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Signifier";
+  src: local("Signifier"),
+   url("./fonts/signifier-black-italic.woff") format("woff");
+  font-weight: 900;
+  font-style: italic;
 }
 
 @font-face {
   font-family: "Founders Grotesk";
   src: local("Founders Grotesk"),
-   url("./fonts/test-founders-grotesk-regular.woff") format("woff");
+   url("./fonts/founders-grotesk-light.woff") format("woff");
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Founders Grotesk";
+  src: local("Founders Grotesk"),
+   url("./fonts/founders-grotesk-light-italic.woff") format("woff");
+  font-weight: 300;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "Founders Grotesk";
+  src: local("Founders Grotesk"),
+   url("./fonts/founders-grotesk-regular.woff") format("woff");
   font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Founders Grotesk";
+  src: local("Founders Grotesk"),
+   url("./fonts/founders-grotesk-regular-italic.woff") format("woff");
+  font-weight: 400;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "Founders Grotesk";
+  src: local("Founders Grotesk"),
+   url("./fonts/founders-grotesk-medium.woff") format("woff");
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Founders Grotesk";
+  src: local("Founders Grotesk"),
+   url("./fonts/founders-grotesk-medium-italic.woff") format("woff");
+  font-weight: 500;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "Founders Grotesk";
+  src: local("Founders Grotesk"),
+   url("./fonts/founders-grotesk-semibold.woff") format("woff");
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Founders Grotesk";
+  src: local("Founders Grotesk"),
+   url("./fonts/founders-grotesk-semibold-italic.woff") format("woff");
+  font-weight: 600;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "Founders Grotesk";
+  src: local("Founders Grotesk"),
+   url("./fonts/founders-grotesk-bold.woff") format("woff");
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Founders Grotesk";
+  src: local("Founders Grotesk"),
+   url("./fonts/founders-grotesk-bold-italic.woff") format("woff");
+  font-weight: 700;
+  font-style: italic;
 }
 
 .App {
   position: relative;
   overflow-x: hidden;
+  font-family: var(--font-primary);
 }
 
 .Header {
@@ -45,14 +224,20 @@
 }
 
 .ProjectsList {
-  /* width: 33.3333%; */
+  width: 100%;
   /* margin: 0 auto; */
   display: flex;
   flex-direction: column;
-  gap: 10rem;
-  grid-column: 6 / span 4;
+  gap: 250px;
+  grid-column: 6 / span 9;
   padding: 0;
-  margin: 10rem auto;
+  margin: 0 auto 250px auto;
+}
+
+@media only screen and (max-width: 768px) {
+  .ProjectsList {
+    gap: 70px;
+  } 
 }
 
 .ProjectsItem {
@@ -68,7 +253,16 @@
 
 .ProjectsItemInner {
   position: relative;
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  gap: 20px;
   width: 100%;
+}
+
+@media only screen and (max-width: 768px) {
+  .ProjectsItemInner {
+    display: inline-block;
+  }
 }
 
 .blur-up {
@@ -104,4 +298,13 @@
   grid-template-columns: repeat(14, 1fr);
   column-gap: 20px;
   margin: 0 20px;
+  padding-top: 300px;
+}
+
+@media only screen and (max-width: 768px) {
+  .Main {
+    display: flex;
+    flex-direction: column;
+    padding-top: 168px;
+  }
 }

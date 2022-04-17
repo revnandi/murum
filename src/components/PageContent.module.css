@@ -1,0 +1,168 @@
+.Container {
+  position: fixed;
+  top: 0;
+  left: 20px;
+  overflow: auto;
+  grid-column: 1 / span 4;
+  width: calc(((100% - 20px) / 14) * 4);
+  height: 100%;
+  padding-top: 300px;
+  -ms-overflow-style: none;  /* Internet Explorer 10+ */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.Container::-webkit-scrollbar { 
+  display: none;  /* Safari and Chrome */
+}
+
+.ContainerHidden {
+  display: none;
+}
+
+.Title {
+  font-family: var(--font-secondary);
+  font-size: 1.875rem;
+  line-height: 1.166em;
+  margin-bottom: 1.166em;
+}
+
+.LinkTitle {
+  margin-bottom: 35px;
+}
+
+.LinkTitle p {
+  margin: 0;
+}
+
+.LinkTitle a {
+  position: relative;
+  color: #000;
+  font-family: var(--font-secondary);
+  font-size: 1.875rem;
+  line-height: 1.166em;
+  font-weight: 400;
+  text-decoration: none;
+}
+
+.LinkTitle a::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  transform: translateY(-100%);
+  height: 1.25px;
+  width: 100%;
+  background-color: #000;
+}
+
+.LinkTitle a::after {
+  content: '↗';
+  position: absolute;
+  right: -0.25em;
+  transform: translateX(100%);
+  font-size: 1.5rem;
+}
+
+.Content {
+  font-family: var(--font-primary);
+}
+
+.Content p {
+  margin: 0 0 0.533em 0;
+}
+
+.Content p, .Content ul, .Content li {
+  font-size: 0.937rem;
+  line-height: 1.2em; 
+}
+
+.Content a {
+  color: #000;
+  text-decoration: none;
+}
+
+.ContentContact {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(4, 1fr);
+  padding-right: 20px;
+}
+
+.ContactBody {
+  grid-column: 1 / span 2;
+}
+
+.ContactLinks {
+  grid-column: 3 / span 2;
+}
+
+.Link {
+  position: relative;
+}
+
+.Link::after {
+  content: '↗';
+  position: absolute;
+  right: -3px;
+  transform: translate(100%, 20%);
+  font-size: 0.812rem;
+  font-family: system-ui;
+}
+
+.CloseButton {
+  position: absolute;
+  top: calc(300px + 0.5rem);
+  right: 0;
+  margin: 0;
+  width: 1rem;
+  height: 1rem;
+  cursor: pointer;
+}
+
+.PressItem {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  column-gap: 1.25rem;
+  margin-bottom: 1.562rem;
+}
+
+.PressItem .Content {
+  grid-column: 2 / span 3;
+}
+
+.PressItem h1,
+.PressItem h2,
+.PressItem h3,
+.PressItem h4,
+.PressItem h5,
+.PressItem h6 {
+  margin-top: 0;
+  font-family: var(--font-secondary);
+  font-size: 1.125rem;
+  font-weight: normal;
+  line-height: 1.333em;
+}
+
+.PressItem p {
+  margin-bottom: 0.937rem;
+}
+
+.PressItem a {
+  position: relative;
+  font-family: var(--font-primary);
+}
+
+.PressItem a::after {
+  content: '↗';
+  position: absolute;
+  right: -3px;
+  transform: translateX(100%);
+  font-size: 0.812rem;
+  font-family: system-ui;
+}
+
+.Year {
+  grid-column: 1 / span 1;
+  font-family: var(--font-primary);
+  font-size: 0.812rem;
+  line-height: 1.461em;
+}

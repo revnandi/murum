@@ -15,15 +15,16 @@ interface Props {
     handleHover: (projectIndex: number | null) => void,
     handleCursor: (value: boolean) => void,
     handleCursorChange: (value: CursorContent) => void,
-    handleProjectClick: (value: number) => void,
+    handleProjectClick: (value: number, slug: string) => void,
     handleLightboxOpen: (images: any, indexOfClicked: number) => void,
   },
   projectIndex: number,
+  projectSlug: string,
   activeProjectIndex: number | null,
   isActive: boolean
 };
 
-function Carousel({ images, passedFunctions, projectIndex, activeProjectIndex }: Props) {
+function Carousel({ images, passedFunctions, projectIndex, activeProjectIndex, projectSlug }: Props) {
   const transitionDuration = 0.1;
   const imagePreviewElement = useRef<any>(null);
   const imageElements = useRef(new Array());
@@ -33,7 +34,7 @@ function Carousel({ images, passedFunctions, projectIndex, activeProjectIndex }:
   const isActive = useRef(false);
 
   const handleClickActivate = () => {
-    passedFunctions.handleProjectClick(projectIndex);
+    passedFunctions.handleProjectClick(projectIndex, projectSlug);
   };
 
   const handleClickOpen = () => {
@@ -260,6 +261,8 @@ function Carousel({ images, passedFunctions, projectIndex, activeProjectIndex }:
             className={ [styles.PreviewImage, 'lazyload', 'blur-up'].join(' ') }
             src={ `https://admin.murum.studio/storage/uploads${images[0].value.sizes.lqip.path}` }
             data-src={ `https://admin.murum.studio/storage/uploads${images[0].value.sizes.medium.path}` }
+            width={ images[0].value.sizes.medium.width }
+            height={ images[0].value.sizes.medium.height }
           />
         </picture>
       )
@@ -276,7 +279,7 @@ function Carousel({ images, passedFunctions, projectIndex, activeProjectIndex }:
             alt=""
             width={ image.value.sizes.medium.width }
             height={ image.value.sizes.medium.height }
-            onClick={ () => passedFunctions.handleProjectClick(projectIndex) }
+            onClick={ () => passedFunctions.handleProjectClick(projectIndex, projectSlug) }
           /> 
         </picture>)
     });

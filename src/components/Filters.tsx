@@ -1,30 +1,64 @@
 import styles from './Filters.module.css';
 import useStore from '../store';
-import { Filter } from '../models/Filter'
+import Filter from '../models/Filter'
+
+const filtersData  = [
+  {
+    title: "All",
+    slug: ''
+  },
+  {
+    title: "Architcture",
+    slug: 'architcture'
+  },
+  {
+    title: "Installation",
+    slug: 'installation'
+  },
+  {
+    title: "Practice",
+    slug: 'practice'
+  },
+  {
+    title: "Theory",
+    slug: 'theory'
+  },
+  {
+    title: "Bamboo",
+    slug: 'bamboo'
+  }
+];
 
 function Filters() {
   const {
+    activeTags,
     setActiveTags
   } = useStore();
 
   const handleClick = (tag: string) => {
-    setActiveTags([tag]);
+    let toSet = [tag];
+    if(tag === '') {
+      toSet = [];
+    }
+    console.log(activeTags.includes(tag))
+    setActiveTags(toSet);
   };
 
-  const renderFilters = (filters: Filter[]) => {
-    return filters.map(item => {
-      return <li className={ styles.Item } onClick={ () => handleClick('') }>All</li>
+  const renderFilters = () => {
+    return filtersData.map((item, index) => {
+      return <li
+        key={ index }
+        className={ [styles.Item, activeTags.includes(item.slug) ? styles.ItemActive : ''].join(' ') }
+        onClick={ () => handleClick(item.slug) }
+      >
+        { item.title }
+      </li>
     })
   };
 
   return (
     <ul className={ styles.List }>
-        <li className={ styles.Item } onClick={ () => handleClick('') }>All</li>
-        <li className={ styles.Item } onClick={ () => handleClick('architcture') }>Architcture</li>
-        <li className={ styles.Item } onClick={ () => handleClick('installation') }>Installation</li>
-        <li className={ styles.Item } onClick={ () => handleClick('practice') }>Practice</li>
-        <li className={ styles.Item } onClick={ () => handleClick('theory') }>Theory</li>
-        <li className={ styles.Item } onClick={ () => handleClick('bamboo') }>Bamboo</li>
+      { renderFilters() }
     </ul>
   )
 };
