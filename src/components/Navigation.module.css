@@ -1,13 +1,86 @@
 .Navigation {
+  display: flex;
+  align-items: center;
+  gap: 0 1.875rem;
   grid-column: 1 / span 5;
   margin-left: 1.25rem;
+}
+
+.Wordmark {
+  font-size: 1.875rem;
+  font-family: var(--font-secondary);
+  color: #000;
+}
+.MenuButton {
+  display: none;
+}
+
+@media only screen and (max-width: 768px) {
+  .MenuButton {
+    position: absolute;
+    right: 20px;
+    display: flex;
+    align-items: center;
+    width: 20px;
+    height: 14px;
+  }
+  .MenuButton::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background-color: #000;
+  }
+  .MenuButton::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background-color: #000;
+  }
+  .MenuButton span {
+    display: inline-block;
+    width: 100%;
+    height: 1px;
+    margin: 0;
+    background: #000;
+  }
 }
 
 .List {
   display: flex;
   list-style: none;
-  gap: 1.875rem;
+  gap: 0 1.875rem;
   padding: 0;
+}
+
+@media only screen and (max-width: 768px) {
+  .List {
+    position: fixed;
+    top: 96px;
+    display: none;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin: 0;
+    width: calc(100% - 40px);
+    height: calc(100vh - 96px - 40px);
+  }
+
+  .OpenList {
+    display: flex;
+  }
+}
+
+
+@media only screen and (max-width: 768px) {
+  span {
+    margin: 10px auto 8px auto;
+    color: #fff;
+  }
 }
 
 .Item {
@@ -20,6 +93,19 @@
   cursor: pointer;
 }
 
+@media only screen and (max-width: 768px) {
+  .Item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-basis: 50%;
+    margin: 0;
+    border-radius: 7px;
+    background-color: #000;
+  }
+}
+
 .SubList {
   position: absolute;
   top: 100%;
@@ -29,15 +115,48 @@
   margin: 0;
   list-style: none;
 }
+@media only screen and (max-width: 768px) {
+  .SubList {
+    position: relative;
+    top: initial;
+    display: flex;
+    flex-direction: column;
+    gap: 7px 0;
+    flex: 1;
+    width: 100%;
+    padding: 7px;
+    align-items: center;
+  }
+}
 
 .SubItem {
+  font-family: var(--font-primary);
   margin-top: 0.666em;
   font-size: 0.937rem;
   line-height: 1.2em;
 }
 
-.Item:hover .SubList {
-  display: block;
+@media only screen and (max-width: 768px) {
+  .SubItem {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 0.75rem;
+    margin: 0;
+    border-radius: 7px;
+    background: #fff;
+    font-size: 1.062rem;
+    line-height: 1.176em;
+    text-align: center;
+  }
+}
+
+@media only screen and (min-width: 769px) {
+  .Item:hover .SubList {
+    display: block;
+  }
 }
 
 .SubItem {

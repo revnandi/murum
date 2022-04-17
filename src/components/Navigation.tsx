@@ -1,12 +1,9 @@
 // import { Link } from "react-router-dom";
+import { useState } from 'react';
 import styles from './Navigation.module.css';
 import useStore from '../store';
 
 const navigationItems = [
-  {
-    title: 'Murum',
-    children: null
-  },
   {
     title: 'About',
     children: [
@@ -41,7 +38,7 @@ const navigationItems = [
       }
     ]
   },
-]
+];
 
 const renderItems = () => {
 
@@ -70,10 +67,19 @@ const renderItems = () => {
 };
 
 function Navigation() {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleClick = () => {
+    setIsOpen(!isOpen);
+  };
 
   return (
     <nav className={ styles.Navigation }>
-      <ul className={ styles.List }>
+      <div className={ styles.Wordmark }>Murum</div>
+      <div className={ styles.MenuButton } onClick={ () => handleClick() }>
+        <span></span>
+      </div>
+      <ul className={ [styles.List, isOpen ? styles.OpenList : ''].join(" ") }>
         { renderItems() }
       </ul>
     </nav>
