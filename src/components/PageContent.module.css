@@ -11,6 +11,15 @@
   scrollbar-width: none;  /* Firefox */
 }
 
+@media only screen and (max-width: 768px) {
+  .Container {
+    position: relative;
+    left: 0;
+    width: 100%;
+    padding-top: 0;
+  }
+}
+
 .Container::-webkit-scrollbar { 
   display: none;  /* Safari and Chrome */
 }
@@ -116,6 +125,12 @@
   width: 1rem;
   height: 1rem;
   cursor: pointer;
+}
+
+@media only screen and (max-width: 768px) {
+  .CloseButton {
+    top: 8px;
+  }
 }
 
 .PressItem {

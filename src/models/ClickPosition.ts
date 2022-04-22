@@ -1,0 +1,1 @@
+export type ClickPosition = 'none' | 'activate' | 'open' | 'prev' | 'next';

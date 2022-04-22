@@ -1,35 +1,31 @@
-import styles from './Filters.module.css';
+import { useEffect, useState } from 'react';
 import useStore from '../store';
-import Filter from '../models/Filter'
-
-const filtersData  = [
-  {
-    title: "All",
-    slug: ''
-  },
-  {
-    title: "Architcture",
-    slug: 'architcture'
-  },
-  {
-    title: "Installation",
-    slug: 'installation'
-  },
-  {
-    title: "Practice",
-    slug: 'practice'
-  },
-  {
-    title: "Theory",
-    slug: 'theory'
-  },
-  {
-    title: "Bamboo",
-    slug: 'bamboo'
-  }
-];
+import styles from './Filters.module.css';
+import { gsap } from 'gsap';
+import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
+gsap.registerPlugin(ScrollToPlugin);
+import Filter from '../models/Filter';
 
 function Filters() {
+  const [error, setError] = useState(null);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [filterItems, setFilterItems] = useState([]);
+
+  useEffect(() => {
+    fetch(`https://admin.murum.studio/api/collections/get/filters?token=b4feea70ee9842384135e890083a04`)
+      .then(res => res.json())
+      .then(
+        (result) => {
+          setIsLoaded(true);
+          setFilterItems(result.entries);
+        },
+        (error) => {
+          setIsLoaded(true);
+          setError(error);
+        }
+      )
+  }, []);
+
   const {
     activeTags,
     setActiveTags
@@ -37,21 +33,21 @@ function Filters() {
 
   const handleClick = (tag: string) => {
     let toSet = [tag];
-    if(tag === '') {
+    if(tag === 'all') {
       toSet = [];
     }
-    console.log(activeTags.includes(tag))
     setActiveTags(toSet);
+    gsap.to(window, { duration: 0.2, scrollTo: { y: '#root' } });
   };
 
   const renderFilters = () => {
-    return filtersData.map((item, index) => {
+    return filterItems.map((item: Filter) => {
       return <li
-        key={ index }
-        className={ [styles.Item, activeTags.includes(item.slug) ? styles.ItemActive : ''].join(' ') }
-        onClick={ () => handleClick(item.slug) }
+        key={ item._id }
+        className={ [styles.Item, activeTags.includes(item.label_slug) ? styles.ItemActive : ''].join(' ') }
+        onClick={ () => handleClick(item.label_slug) }
       >
-        { item.title }
+        { item.label }
       </li>
     })
   };

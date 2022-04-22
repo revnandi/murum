@@ -17,7 +17,11 @@ interface PortfolioState {
   openedPage: string | null;
   setOpenedPage: (slug: string | null) => void;
 
-  // lightboxisVisible: boolean;
+  openedImages: any[] | null;
+  setOpenedImages: (images: any[] | null) => void;
+
+  isLightboxOpen: boolean;
+  setIsLightboxOpen: (value: boolean) => void;
 };
 
 const useStore = create<PortfolioState>(devtools((set) => ({
@@ -54,6 +58,20 @@ const useStore = create<PortfolioState>(devtools((set) => ({
   set((state) => ({
     ...state,
     openedPage
+  })),
+
+  openedImages: null,
+  setOpenedImages: (openedImages:  any[] | null) =>
+  set((state) => ({
+    ...state,
+    openedImages
+  })),
+
+  isLightboxOpen: false,
+  setIsLightboxOpen: (isLightboxOpen: boolean) =>
+  set((state) => ({
+    ...state,
+    isLightboxOpen
   }))
 
 })));

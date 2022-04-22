@@ -18,8 +18,6 @@ import PageContent from './components/PageContent';
 
 export type CursorContent = 'More' | '←' | '→' | 'Open';
 
-export type ClickPosition = 'none' | 'activate' | 'open' | 'prev' | 'next';
-
 type OpenedProject = number | null;
 
 function App() {
@@ -33,7 +31,11 @@ function App() {
     openedProject,
     setOpenedProject,
     openedPage,
-    setOpenedPage
+    setOpenedPage,
+    openedImages,
+    setOpenedImages,
+    isLightboxOpen,
+    setIsLightboxOpen
   } = useStore();
 
   let { slug } = useParams();
@@ -41,17 +43,11 @@ function App() {
 
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
-  // const [projects, setProjects] = useState([]);
-  // const [filteredProjects, setFilteredProjects] = useState<string[] | []>(projects);
 
   const [cursorIsHoveringImage, setCursorIsHoveringImage] = useState(false);
   const [cursorType, setCursorType] = useState<CursorContent>('More')
-  // const [openedProject, setOpenedProject] = useState<number | null>(null);
-  const [openedImages, setOpenedImages] = useState<any>(null);
   const [openedImageIndex, setOpenedImageIndex] = useState<number>(0);
-  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [hoveredProject, setHoveredProject] = useState<number | null>(null);
-  // const [activeTags, setActiveTags] = useState<string[] | []>([]);
 
   const lightBoxFunctions = {
     resetLightbox: (e: React.MouseEvent<HTMLElement>) => {
@@ -109,7 +105,6 @@ function App() {
 
   const filterProjects = (projectsToFilter: string[] | []) => {
     // Avoid filter for empty string
-    // console.log(activeTags);
     if (activeTags.length === 0) {
       return allProjects;
     }

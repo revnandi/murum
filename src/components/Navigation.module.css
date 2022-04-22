@@ -10,6 +10,7 @@
   font-size: 1.875rem;
   font-family: var(--font-secondary);
   color: #000;
+  cursor: pointer;
 }
 .MenuButton {
   display: none;

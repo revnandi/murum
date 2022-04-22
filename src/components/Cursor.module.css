@@ -16,3 +16,15 @@
   pointer-events: none;
   z-index: 5;
 }
+
+@media only screen and (max-width: 768px) {
+  .Cursor {
+    display: none;
+  }
+}
+
+.CursorArrow {
+  width: 2.312rem;
+  height: 2.312rem;
+  background-color: #fff;
+}

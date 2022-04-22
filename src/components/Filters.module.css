@@ -1,4 +1,5 @@
 .List {
+  z-index: 1;
   position: fixed;
   right: 1.25rem;
   bottom: 0.875rem;
@@ -14,7 +15,7 @@
 @media only screen and (max-width: 768px) {
   .List {
     z-index: 5;
-    top: 80px;
+    position: relative;
     bottom: unset;
     left: 0;
     display: grid;
@@ -22,6 +23,12 @@
     gap: 0.5rem 0.25rem;
     width: 100%;
     padding: 20px;
+  }
+}
+
+@media only screen and (max-width: 414px) {
+  .List {
+    gap: 2vw 1vw;
   }
 }
 
@@ -37,6 +44,13 @@
 @media only screen and (max-width: 768px) {
   .Item {
     font-size: 1.187rem;
+    line-height: 1.157em;
+  }
+}
+
+@media only screen and (max-width: 414px) {
+  .Item {
+    font-size: 4vw;
     line-height: 1.157em;
   }
 }

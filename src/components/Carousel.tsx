@@ -7,7 +7,7 @@ import styles from './Carousel.module.css';
 
 import { CursorContent } from '../App';
 
-import { ClickPosition } from '../App';
+import { ClickPosition } from '../models/ClickPosition';
 
 interface Props {
   images?: Array<any>,
@@ -45,13 +45,13 @@ function Carousel({ images, passedFunctions, projectIndex, activeProjectIndex, p
 
   const handleClickPrev = () => {
     if (activeImage.current === 0) {
-      gsap.to(imageElements.current[totalImages.current - 1] ,{
+      gsap.to(imageElements.current[totalImages.current - 1].querySelector('img') ,{
         opacity: 1,
         duration: transitionDuration,
         pointerEvents: 'auto',
         zIndex: 2
       });
-      gsap.to(imageElements.current[activeImage.current] ,{
+      gsap.to(imageElements.current[activeImage.current].querySelector('img') ,{
         opacity: 0,
         duration: transitionDuration,
         pointerEvents: 'none',
@@ -59,13 +59,13 @@ function Carousel({ images, passedFunctions, projectIndex, activeProjectIndex, p
       });
       activeImage.current = totalImages.current - 1;
     } else {
-      gsap.to(imageElements.current[activeImage.current - 1] ,{
+      gsap.to(imageElements.current[activeImage.current - 1].querySelector('img') ,{
         opacity: 1,
         duration: transitionDuration,
         pointerEvents: 'auto',
         zIndex: 2
       });
-      gsap.to(imageElements.current[activeImage.current] ,{
+      gsap.to(imageElements.current[activeImage.current].querySelector('img') ,{
         opacity: 0,
         duration: transitionDuration,
         pointerEvents: 'none',
@@ -77,13 +77,13 @@ function Carousel({ images, passedFunctions, projectIndex, activeProjectIndex, p
 
   const handleClickNext = () => {
     if (activeImage.current === totalImages.current - 1) {
-      gsap.to(imageElements.current[activeImage.current] ,{
+      gsap.to(imageElements.current[activeImage.current].querySelector('img') ,{
         opacity: 0,
         duration: transitionDuration,
         pointerEvents: 'none',
         zIndex: 0
       });
-      gsap.to(imageElements.current[0] ,{
+      gsap.to(imageElements.current[0].querySelector('img') ,{
         opacity: 1,
         duration: transitionDuration,
         pointerEvents: 'auto',
@@ -91,13 +91,13 @@ function Carousel({ images, passedFunctions, projectIndex, activeProjectIndex, p
       });
       activeImage.current = 0;
     } else {
-      gsap.to(imageElements.current[activeImage.current + 1] ,{
+      gsap.to(imageElements.current[activeImage.current + 1].querySelector('img') ,{
         opacity: 1,
         duration: transitionDuration,
         pointerEvents: 'auto',
         zIndex: 2
       });
-      gsap.to(imageElements.current[activeImage.current] ,{
+      gsap.to(imageElements.current[activeImage.current].querySelector('img') ,{
         opacity: 0,
         duration: transitionDuration,
         pointerEvents: 'none',
@@ -109,9 +109,9 @@ function Carousel({ images, passedFunctions, projectIndex, activeProjectIndex, p
 
   const handleMouseEnter = (e: any) => {
     if (images && images.length > 1) {
-      if (e.target?.width * 0.25 >= e.offsetX) {
+      if (e.currentTarget.offsetWidth * 0.25 >= e.offsetX) {
         clickPosition.current = 'prev';
-      } else if (e.target?.width * 0.75 <= e.offsetX) {
+      } else if (e.currentTarget.offsetWidth * 0.75 <= e.offsetX) {
         clickPosition.current = 'next';
       } else {
         clickPosition.current = 'open';
@@ -132,10 +132,10 @@ function Carousel({ images, passedFunctions, projectIndex, activeProjectIndex, p
     passedFunctions.handleHover(projectIndex);
     if (isActive.current) {
       if (images && images.length > 1) {
-        if (e.target?.width * 0.25 >= e.offsetX) {
+        if (e.currentTarget.offsetWidth * 0.25 >= e.offsetX) {
           clickPosition.current = 'prev';
           passedFunctions.handleCursorChange('←');
-        } else if (e.target?.width * 0.75 <= e.offsetX) {
+        } else if (e.currentTarget.offsetWidth * 0.75 <= e.offsetX) {
           passedFunctions.handleCursorChange('→');
           clickPosition.current = 'next';
         } else {
@@ -177,23 +177,30 @@ function Carousel({ images, passedFunctions, projectIndex, activeProjectIndex, p
     imageElement.addEventListener('mouseleave', handleMouseLeave);
     imageElement.addEventListener('mousemove', handleMouseMove);
     imageElement.addEventListener('click', handleMouseClick);
+    imageElement.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+    });
   };
 
   const removeImageEventListeners = (imageElement: HTMLImageElement, index: number) => {
+    if(!imageElement) return;
     imageElement.removeEventListener('mouseenter', handleMouseEnter);
     imageElement.removeEventListener('mouseleave', handleMouseLeave);
     imageElement.removeEventListener('mousemove', handleMouseMove);
     imageElement.removeEventListener('click', handleMouseClick);
+    imageElement.removeEventListener('contextmenu', (e) => {
+      e.preventDefault();
+    });
   };
 
   useEffect(() => {
     if (imageElements.current.length > 0) {
 
-      // gsap.to(imageElements.current[0] ,{
-      //   opacity: 1,
-      //   pointerEvents: 'auto',
-      //   zIndex: 2
-      // });
+      gsap.to(imageElements.current[0].querySelector('img') ,{
+        opacity: 1,
+        pointerEvents: 'auto',
+        zIndex: 2
+      });
 
       // imageElements.current[0].style.opacity = 1;
       totalImages.current = imageElements.current.length;
@@ -208,6 +215,10 @@ function Carousel({ images, passedFunctions, projectIndex, activeProjectIndex, p
       imagePreviewElement.current.addEventListener('mouseleave', handleMouseLeave);
       imagePreviewElement.current.addEventListener('mousemove', handleMouseMove);
       imagePreviewElement.current.addEventListener('click', handleMouseClick);
+
+      imagePreviewElement.current.addEventListener('contextmenu', (e: any) => {
+        e.preventDefault();
+      });
     };
 
     return () => {
@@ -215,8 +226,11 @@ function Carousel({ images, passedFunctions, projectIndex, activeProjectIndex, p
         imageElements.current.forEach((imageElement, index) => {
           removeImageEventListeners(imageElement, index);
         });
-
+        if(!imagePreviewElement.current) return;
         imagePreviewElement.current.removeEventListener('mousemove', handleMouseMove);
+        imagePreviewElement.current.removeEventListener('contextmenu', (e: any) => {
+          e.preventDefault();
+        });
       }
     }
   }, []);
@@ -270,9 +284,12 @@ function Carousel({ images, passedFunctions, projectIndex, activeProjectIndex, p
 
     const renderImages = images.map(image => {
       return (
-        <picture className={ styles.ImageContainer } key={ image.value._id }>
+        <picture
+          className={ styles.ImageContainer }
+          key={ image.value._id }
+          ref={ el => (imageElements.current = [...imageElements.current, el]) }
+        >
           <img
-            ref={ el => (imageElements.current = [...imageElements.current, el]) }
             className={ [styles.Image, 'lazyload', 'blur-up'].join(' ') }
             src={ `https://admin.murum.studio/storage/uploads${image.value.sizes.lqip.path}` }
             data-src={ `https://admin.murum.studio/storage/uploads${image.value.sizes.medium.path}` }

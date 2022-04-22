@@ -3,10 +3,11 @@ import 'lazysizes';
 import 'lazysizes/plugins/attrchange/ls.attrchange';
 import 'lazysizes/plugins/blur-up/ls.blur-up';
 import styles from './Lightbox.module.css';
+import useStore from '../store';
+import { useSwipeable } from 'react-swipeable';
 
-import { CursorContent } from '../App';
-
-import { ClickPosition } from '../App';
+import { CursorContent } from '../models/CursorContent';
+import{ ClickPosition } from '../models/ClickPosition';
 
 interface Props {
   isOpen: boolean;
@@ -19,13 +20,20 @@ interface Props {
   },
 }
 
-function Lightbox({ isOpen, images, clickedImageIndex, passedFunctions }: Props) {
+function Lightbox({ clickedImageIndex, passedFunctions }: Props) {
+  const {
+    openedImages,
+    setOpenedImages,
+    isLightboxOpen,
+    setIsLightboxOpen
+  } = useStore();
+  
   let [currentClickedIndex, setCurrentClickedIndex] = useState(1);
   const clickPosition = useRef<ClickPosition>('none');
   const bigImage = useRef<any>(null);
 
   const handleMouseEnter = (e: any) => {
-    if(images.length > 1) {
+    if(openedImages && openedImages.length > 1) {
       if (e.target?.width * 0.5 >= e.offsetX) {
         clickPosition.current = 'prev';
       } else if (e.target?.width * 0.5 <= e.offsetX) {
@@ -41,7 +49,7 @@ function Lightbox({ isOpen, images, clickedImageIndex, passedFunctions }: Props)
   };
 
   const handleMouseMove = (e: any) => {
-    if(images.length > 1) {
+    if(openedImages && openedImages.length > 1) {
       if (e.target?.width * 0.5 >= e.offsetX) {
         clickPosition.current = 'prev';
         passedFunctions.handleCursorChange('←');
@@ -54,10 +62,10 @@ function Lightbox({ isOpen, images, clickedImageIndex, passedFunctions }: Props)
 
 
   const handleClickPrev = () => {
-    if (currentClickedIndex === 0) {
+    if (openedImages && currentClickedIndex === 0) {
       // console.log("handleClickPrev");
       // console.log("currentClickedIndex before change: " + currentClickedIndex);
-      let indexOfLastImage = images.length - 1;
+      let indexOfLastImage = openedImages.length - 1;
       // console.log(indexOfLastImage);
       setCurrentClickedIndex(indexOfLastImage);
       // console.log("currentClickedIndex after change: " + currentClickedIndex);
@@ -70,7 +78,7 @@ function Lightbox({ isOpen, images, clickedImageIndex, passedFunctions }: Props)
   };
 
   const handleClickNext = () => {
-    if (currentClickedIndex === images.length - 1) {
+    if (openedImages && currentClickedIndex === openedImages.length - 1) {
       // console.log("handleClickNext");
       // console.log("currentClickedIndex before change: " + currentClickedIndex);
       setCurrentClickedIndex(0);
@@ -96,11 +104,21 @@ function Lightbox({ isOpen, images, clickedImageIndex, passedFunctions }: Props)
     }
   };
 
+  const swipeHandlers = useSwipeable(
+    {
+      onSwipedLeft: () => handleClickPrev(),
+      onSwipedRight: () => handleClickPrev()
+    }
+  );
+
   const addImageEventListeners = (imageElement: HTMLImageElement) => {
     imageElement.addEventListener('mouseenter', handleMouseEnter);
     imageElement.addEventListener('mouseleave', handleMouseLeave);
     imageElement.addEventListener('mousemove', handleMouseMove);
     imageElement.addEventListener('click', handleMouseClick);
+    imageElement.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+    });
   };
 
   const removeImageEventListeners = (imageElement: HTMLImageElement) => {
@@ -108,6 +126,9 @@ function Lightbox({ isOpen, images, clickedImageIndex, passedFunctions }: Props)
     imageElement.removeEventListener('mouseleave', handleMouseLeave);
     imageElement.removeEventListener('mousemove', handleMouseMove);
     imageElement.removeEventListener('click', handleMouseClick);
+    imageElement.removeEventListener('contextmenu', (e) => {
+      e.preventDefault();
+    });
   };
 
   useEffect(() => {
@@ -120,7 +141,7 @@ function Lightbox({ isOpen, images, clickedImageIndex, passedFunctions }: Props)
   }, []);
   
   useEffect(() => {
-    // console.log("useEffect [isOpen]");
+    // console.log("useEffect [isLightboxOpen]");
     setCurrentClickedIndex(clickedImageIndex);
     if(bigImage.current) {
       addImageEventListeners(bigImage.current);
@@ -130,18 +151,18 @@ function Lightbox({ isOpen, images, clickedImageIndex, passedFunctions }: Props)
         removeImageEventListeners(bigImage.current);
       }
     };
-  }, [isOpen]);
+  }, [isLightboxOpen]);
 
   return (
-    <div className={ styles.Lightbox } style={{ display: isOpen ? 'block' : 'none' }}>
+    <div className={ styles.Lightbox } style={{ display: isLightboxOpen ? 'block' : 'none' }}>
       <div className={ styles.Inner } onClick={ passedFunctions.resetLightbox }>
-          { images &&
-            <div className={ styles.ImageContainer }>
+          { openedImages &&
+            <div className={ styles.ImageContainer } {...swipeHandlers}>
               <img
                 ref={ bigImage } 
                 className={ [styles.Image, 'lazyload', 'blur-up'].join(' ') }
-                src={ `https://admin.murum.studio/storage/uploads${images[currentClickedIndex].value.sizes.lqip.path}` }
-                data-src={ `https://admin.murum.studio/storage/uploads${images[currentClickedIndex].value.sizes.large.path}` }
+                src={ `https://admin.murum.studio/storage/uploads${openedImages[currentClickedIndex].value.sizes.lqip.path}` }
+                data-src={ `https://admin.murum.studio/storage/uploads${openedImages[currentClickedIndex].value.sizes.large.path}` }
                 alt=""
               />
             </div>
