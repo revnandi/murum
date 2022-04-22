@@ -8,10 +8,14 @@ gsap.registerPlugin(ScrollToPlugin);
 import NavigationItem from '../models/NavigationItem';
 
 function Navigation() {
+  const {
+    setOpenedPage,
+    setIsLightboxOpen
+  } = useStore();
+
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [navigationItems, setNavigationItems] = useState([]);
-  const { openedPage, setOpenedPage } = useStore();
   let navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -35,6 +39,7 @@ function Navigation() {
   };
 
   const handleWordmarkClick = () => {
+    setIsLightboxOpen(false);
     navigate('/');
     gsap.to(window, { duration: 0.2, scrollTo: { y: '#root' } });
   };
