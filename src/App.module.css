@@ -3,7 +3,7 @@
 }
 
 :root {
-  --font-primary: "Founders Grotesk", sans-serif;
+  --font-primary: 'Inter', sans-serif;
   --font-secondary: "Signifier", serif;
 }
 
@@ -58,7 +58,7 @@
 @font-face {
   font-family: "Signifier";
   src: local("Signifier"),
-   url("./fonts/signifier-regular.woff") format("woff");
+   url("./fonts/signifier-regular.woff2") format("woff2");
   font-weight: 400;
   font-style: normal;
 }
@@ -119,7 +119,7 @@
   font-style: italic;
 }
 
-@font-face {
+/* @font-face {
   font-family: "Founders Grotesk";
   src: local("Founders Grotesk"),
    url("./fonts/founders-grotesk-light.woff") format("woff");
@@ -197,7 +197,7 @@
    url("./fonts/founders-grotesk-bold-italic.woff") format("woff");
   font-weight: 700;
   font-style: italic;
-}
+} */
 
 .App {
   position: relative;
@@ -228,13 +228,13 @@
   /* margin: 0 auto; */
   display: flex;
   flex-direction: column;
-  gap: 250px;
+  gap: 167px;
   grid-column: 6 / span 9;
   padding: 0;
-  margin: 0 auto 250px auto;
+  margin: 0 auto 167px auto;
 }
 
-@media only screen and (max-width: 768px) {
+@media only screen and (max-width: 767px) {
   .ProjectsList {
     gap: 70px;
   } 
@@ -259,7 +259,7 @@
   width: 100%;
 }
 
-@media only screen and (max-width: 768px) {
+@media only screen and (max-width: 767px) {
   .ProjectsItemInner {
     display: inline-block;
   }
@@ -298,10 +298,10 @@
   grid-template-columns: repeat(14, 1fr);
   column-gap: 20px;
   margin: 0 20px;
-  padding-top: 300px;
+  padding-top: 200px;
 }
 
-@media only screen and (max-width: 768px) {
+@media only screen and (max-width: 767px) {
   .Main {
     display: flex;
     flex-direction: column;

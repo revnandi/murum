@@ -8,11 +8,11 @@
   padding-right: 1rem;
 }
 
-@media only screen and (max-width: 768px) {
+@media only screen and (max-width: 767px) {
   .Box {
     grid-template-areas: "title title title title title"
-    "tags tags specs specs specs"
-    "description description description description description";
+    "tags tags description description description"
+    "specs specs  description description description";
     padding: 0;
   }
 }
@@ -26,9 +26,9 @@
   line-height: 1.166em;
 }
 
-@media only screen and (max-width: 768px) {
+@media only screen and (max-width: 767px) {
   .Title {
-    grid-area: title;
+    grid-column: 1 / span 5;
     padding-right: 1.5rem;
     margin-top: 0.312rem;
     margin-bottom: 0;
@@ -38,13 +38,16 @@
 .Description {
   grid-column: 3 / span 3;
   font-family: var(--font-primary);
-  font-size: 0.937rem;
+  font-size: 0.812rem;
+  line-height: 1.384em;
 }
 
-@media only screen and (max-width: 768px) {
+@media only screen and (max-width: 767px) {
   .Description {
-    grid-area: description;
+    grid-column: 1 / span 5;
     margin-top: 1rem;
+    font-size: 0.937rem;
+    line-height: 1.333em;
   }
 }
 
@@ -58,17 +61,35 @@
   margin-top: 0;
 }
 
-.Specs {
+.TagsAndSpecs {
   grid-column: 1 / span 2;
-  align-self: end;
-  font-family: var(--font-primary);
-  font-size: 0.937rem;
-  line-height: 1.2em;
 }
 
-@media only screen and (max-width: 768px) {
+@media only screen and (max-width: 767px) {
+  .TagsAndSpecs {
+    grid-column: 1 / span 5;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0 20px;
+  }
+}
+
+.Specs {
+  margin-top: 50px;
+  font-family: var(--font-primary);
+  font-size: 0.812rem;
+  line-height: 1.384em;
+}
+
+@media only screen and (max-width: 767px) {
   .Specs {
-    grid-area: specs;
+    grid-column: 3 / span 3;
+    margin-top: 0;
+    font-size: 0.937rem;
+    line-height: 1.333em;
+  }
+  .Specs p {
+    margin-top: 0;
   }
 }
 
@@ -83,9 +104,9 @@
   align-self: baseline;
 }
 
-@media only screen and (max-width: 768px) {
+@media only screen and (max-width: 767px) {
   .Tags {
-    grid-area: tags;
+    grid-column: 1 / span 2;
   }
 }
 
@@ -100,11 +121,18 @@
 .Tag {
   position: relative;
   font-family: var(--font-primary);
-  font-size: 0.937rem;
   display: block;
   margin-right: 1.25rem;
-  line-height: 1.2em;
+  font-size: 0.812rem;
+  line-height: 1.384em;
   text-transform: capitalize;
+}
+
+@media (max-width: 767px) {
+  .Tag {
+    font-size: 0.937rem;
+    line-height: 1.333em;
+  }
 }
 
 .CloseButton {
@@ -117,7 +145,7 @@
   cursor: pointer;
 }
 
-@media only screen and (max-width: 768px) {
+@media only screen and (max-width: 767px) {
   .CloseButton {
     top: 0.5rem;
     right: 0rem;

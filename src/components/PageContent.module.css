@@ -11,7 +11,7 @@
   scrollbar-width: none;  /* Firefox */
 }
 
-@media only screen and (max-width: 768px) {
+@media only screen and (max-width: 767px) {
   .Container {
     position: relative;
     left: 0;
@@ -80,8 +80,15 @@
 }
 
 .Content p, .Content ul, .Content li {
-  font-size: 0.937rem;
-  line-height: 1.2em; 
+  font-size: 0.812rem;
+  line-height: 1.384em;
+}
+
+@media only screen and (max-width: 767px) {
+  .Content p, .Content ul, .Content li {
+    font-size: 0.937rem;
+    line-height: 1.333em;
+  }
 }
 
 .Content a {
@@ -106,6 +113,16 @@
 
 .Link {
   position: relative;
+  font-size: 0.812rem;
+  line-height: 1.384em;
+  text-decoration: none;
+}
+
+@media (max-width: 767px) {
+  .Link {
+    font-size: 0.937rem;
+    line-height: 1.333em;
+  }
 }
 
 .Link::after {
@@ -127,7 +144,7 @@
   cursor: pointer;
 }
 
-@media only screen and (max-width: 768px) {
+@media only screen and (max-width: 767px) {
   .CloseButton {
     top: 8px;
   }

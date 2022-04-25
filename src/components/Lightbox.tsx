@@ -4,10 +4,16 @@ import 'lazysizes/plugins/attrchange/ls.attrchange';
 import 'lazysizes/plugins/blur-up/ls.blur-up';
 import styles from './Lightbox.module.css';
 import useStore from '../store';
-import { useSwipeable } from 'react-swipeable';
+import throttle from 'lodash.throttle';
+import { Swiper, SwiperSlide, useSwiper } from 'swiper/react';
+import { Keyboard, EffectFade, Lazy } from 'swiper';
+import 'swiper/css';
+import 'swiper/css/effect-fade';
+import 'swiper/css/lazy';
+import 'swiper/css/keyboard';
 
 import { CursorContent } from '../models/CursorContent';
-import{ ClickPosition } from '../models/ClickPosition';
+import { ClickPosition } from '../models/ClickPosition';
 
 interface Props {
   isOpen: boolean;
@@ -21,19 +27,21 @@ interface Props {
 }
 
 function Lightbox({ clickedImageIndex, passedFunctions }: Props) {
+  const throttleTime = 50;
   const {
     openedImages,
     setOpenedImages,
     isLightboxOpen,
     setIsLightboxOpen
   } = useStore();
-  
-  let [currentClickedIndex, setCurrentClickedIndex] = useState(1);
+
+  let currentClickedIndex = useRef(1);
   const clickPosition = useRef<ClickPosition>('none');
-  const bigImage = useRef<any>(null);
+  const swiperRef = useRef<any>(null);
+  const swiperElementRef = useRef<any>(null);
 
   const handleMouseEnter = (e: any) => {
-    if(openedImages && openedImages.length > 1) {
+    if (openedImages && openedImages.length > 1) {
       if (e.target?.width * 0.5 >= e.offsetX) {
         clickPosition.current = 'prev';
       } else if (e.target?.width * 0.5 <= e.offsetX) {
@@ -49,7 +57,7 @@ function Lightbox({ clickedImageIndex, passedFunctions }: Props) {
   };
 
   const handleMouseMove = (e: any) => {
-    if(openedImages && openedImages.length > 1) {
+    if (openedImages && openedImages.length > 1) {
       if (e.target?.width * 0.5 >= e.offsetX) {
         clickPosition.current = 'prev';
         passedFunctions.handleCursorChange('←');
@@ -62,35 +70,11 @@ function Lightbox({ clickedImageIndex, passedFunctions }: Props) {
 
 
   const handleClickPrev = () => {
-    if (openedImages && currentClickedIndex === 0) {
-      // console.log("handleClickPrev");
-      // console.log("currentClickedIndex before change: " + currentClickedIndex);
-      let indexOfLastImage = openedImages.length - 1;
-      // console.log(indexOfLastImage);
-      setCurrentClickedIndex(indexOfLastImage);
-      // console.log("currentClickedIndex after change: " + currentClickedIndex);
-    } else {
-      // console.log("handleClickPrev else");
-      // console.log("currentClickedIndex before change: " + currentClickedIndex);
-      setCurrentClickedIndex(currentClickedIndex--);
-      // console.log("currentClickedIndex after change: " + currentClickedIndex);
-    }
+    swiperRef.current.slidePrev();
   };
 
   const handleClickNext = () => {
-    if (openedImages && currentClickedIndex === openedImages.length - 1) {
-      // console.log("handleClickNext");
-      // console.log("currentClickedIndex before change: " + currentClickedIndex);
-      setCurrentClickedIndex(0);
-      // console.log("currentClickedIndex after change: " + currentClickedIndex);
-    } else {
-      // console.log("handleClickNext else");
-      // console.log("currentClickedIndex before change: " + currentClickedIndex);
-      // let currentIndex = currentClickedIndex;
-      // currentIndex++;
-      setCurrentClickedIndex(currentClickedIndex++);
-      // console.log("currentClickedIndex after change: " + currentClickedIndex);
-    }
+    swiperRef.current.slideNext();
   };
 
   const handleMouseClick = () => {
@@ -104,29 +88,22 @@ function Lightbox({ clickedImageIndex, passedFunctions }: Props) {
     }
   };
 
-  const swipeHandlers = useSwipeable(
-    {
-      onSwipedLeft: () => handleClickPrev(),
-      onSwipedRight: () => handleClickPrev()
-    }
-  );
-
-  const addImageEventListeners = (imageElement: HTMLImageElement) => {
-    imageElement.addEventListener('mouseenter', handleMouseEnter);
-    imageElement.addEventListener('mouseleave', handleMouseLeave);
-    imageElement.addEventListener('mousemove', handleMouseMove);
-    imageElement.addEventListener('click', handleMouseClick);
-    imageElement.addEventListener('contextmenu', (e) => {
+  const addSwiperEventListeners = (swiperElement: HTMLDivElement) => {
+    swiperElement.addEventListener('mouseenter', throttle(handleMouseEnter, throttleTime));
+    swiperElement.addEventListener('mouseleave', throttle(handleMouseLeave, throttleTime));
+    swiperElement.addEventListener('mousemove', throttle(handleMouseMove, throttleTime));
+    swiperElement.addEventListener('click', throttle(handleMouseClick, throttleTime));
+    swiperElement.addEventListener('contextmenu', (e) => {
       e.preventDefault();
     });
   };
 
-  const removeImageEventListeners = (imageElement: HTMLImageElement) => {
-    imageElement.removeEventListener('mouseenter', handleMouseEnter);
-    imageElement.removeEventListener('mouseleave', handleMouseLeave);
-    imageElement.removeEventListener('mousemove', handleMouseMove);
-    imageElement.removeEventListener('click', handleMouseClick);
-    imageElement.removeEventListener('contextmenu', (e) => {
+  const removeSwiperEventListeners = (swiperElement: HTMLDivElement) => {
+    swiperElement.removeEventListener('mouseenter', handleMouseEnter);
+    swiperElement.removeEventListener('mouseleave', handleMouseLeave);
+    swiperElement.removeEventListener('mousemove', handleMouseMove);
+    swiperElement.removeEventListener('click', handleMouseClick);
+    swiperElement.removeEventListener('contextmenu', (e) => {
       e.preventDefault();
     });
   };
@@ -134,39 +111,79 @@ function Lightbox({ clickedImageIndex, passedFunctions }: Props) {
   useEffect(() => {
     // console.log("useEffect [clickedImageIndex ]");
   }, [clickedImageIndex]);
-  
+
   useEffect(() => {
     // console.log("useEffect []");
-    setCurrentClickedIndex(clickedImageIndex);
+    currentClickedIndex.current = clickedImageIndex;
   }, []);
-  
+
   useEffect(() => {
     // console.log("useEffect [isLightboxOpen]");
-    setCurrentClickedIndex(clickedImageIndex);
-    if(bigImage.current) {
-      addImageEventListeners(bigImage.current);
+    currentClickedIndex.current = clickedImageIndex;
+    if (swiperElementRef.current) {
+      addSwiperEventListeners(swiperElementRef.current);
     }
     return () => {
-      if(bigImage.current) {
-        removeImageEventListeners(bigImage.current);
+      if (swiperElementRef.current) {
+        removeSwiperEventListeners(swiperElementRef.current);
       }
     };
   }, [isLightboxOpen]);
 
+  const swiperParams: any = {
+    modules: [Keyboard, EffectFade, Lazy],
+    effect: 'fade',
+    fadeEffect: { crossFade: true },
+    loop: true,
+    speed: 200,
+    keyboard: {
+      enabled: true,
+      onlyInViewport: false,
+    },
+  };
+
   return (
-    <div className={ styles.Lightbox } style={{ display: isLightboxOpen ? 'block' : 'none' }}>
-      <div className={ styles.Inner } onClick={ passedFunctions.resetLightbox }>
-          { openedImages &&
-            <div className={ styles.ImageContainer } {...swipeHandlers}>
-              <img
-                ref={ bigImage } 
-                className={ [styles.Image, 'lazyload', 'blur-up'].join(' ') }
-                src={ `https://admin.murum.studio/storage/uploads${openedImages[currentClickedIndex].value.sizes.lqip.path}` }
-                data-src={ `https://admin.murum.studio/storage/uploads${openedImages[currentClickedIndex].value.sizes.large.path}` }
-                alt=""
-              />
-            </div>
-          }
+    <div className={ styles.Lightbox } style={{ display: isLightboxOpen ? 'flex' : 'none' }}>
+      <div
+        onClick={ passedFunctions.resetLightbox }
+        className={ styles.CloseButton }
+      >
+        <svg
+          viewBox="0 0 27 27"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg">
+          <path d="M1 1L26 26M26 1L1 26" stroke="black"/>
+        </svg>
+      </div>
+      <div className={ styles.Inner }>
+        { openedImages &&
+          <Swiper
+            // install Swiper modules
+            {...swiperParams}
+            ref={ swiperElementRef }
+            onSwiper={(swiper) => swiperRef.current = swiper}
+            className={ [styles.Swiper, 'LightBoxSwiper'].join(' ') }
+          >
+            {
+              openedImages.map((image, index) => {
+                return (
+                  <SwiperSlide
+                  className={ styles.SwiperSlide }
+                    key={image.value._id}
+                  >
+                    <img
+                      key={Date.now()}
+                      className={styles.Image}
+                      // src={`https://admin.murum.studio/storage/uploads${image.value.sizes.lqip.path}`}
+                      src={`https://admin.murum.studio/storage/uploads${image.value.sizes.large.path}`}
+                      alt=""
+                    />
+                  </SwiperSlide>
+                )
+              })
+            }
+          </Swiper>
+        }
       </div>
     </div>
   )

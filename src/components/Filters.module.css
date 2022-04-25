@@ -12,17 +12,17 @@
   list-style: none;
 }
 
-@media only screen and (max-width: 768px) {
+@media only screen and (max-width: 767px) {
   .List {
     z-index: 5;
     position: relative;
     bottom: unset;
     left: 0;
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 0.5rem 0.25rem;
     width: 100%;
-    padding: 20px;
+    padding: 20px 0;
   }
 }
 
@@ -41,7 +41,7 @@
   cursor: pointer;
 }
 
-@media only screen and (max-width: 768px) {
+@media only screen and (max-width: 767px) {
   .Item {
     font-size: 1.187rem;
     line-height: 1.157em;
@@ -50,7 +50,7 @@
 
 @media only screen and (max-width: 414px) {
   .Item {
-    font-size: 4vw;
+    font-size: 3.7vw;
     line-height: 1.157em;
   }
 }

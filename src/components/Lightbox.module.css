@@ -1,19 +1,33 @@
 .Lightbox {
-  z-index: 4;
+  z-index: 6;
   position: fixed;
   top: 0;
   left: 0;
   height: 100vh;
   width: 100vw;
-  background-color: rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.85);
 }
 
 .Inner {
   display: flex;
   align-items: center;
   justify-content: center;
+  max-height: calc(100vh - 8rem);
+  max-width: calc(100vw - 8rem);
   height: 100%;
   width: 100%;
+  padding: 4rem 0;
+  margin: 0 auto;
+}
+
+@media (max-width: 767px) {
+  .Inner {
+    max-height: calc(100vh - 0rem);
+    max-width: calc(100vw - 40px);
+  }
 }
 
 .ImageContainer {
@@ -24,7 +38,7 @@
   height: 90%;
 }
 
-@media only screen and (max-width: 768px) {
+@media only screen and (max-width: 767px) {
   .ImageContainer {
     display: flex;
     align-items: center;
@@ -36,12 +50,48 @@
 
 .Image {
   display: block;
-  width: 100%;
+  width: auto;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  margin: 0 auto;
+}
+
+@media only screen and (max-width: 767px) {
+  .Image {
+    height: auto;
+    width: 100%;
+  }
+}
+
+.Swiper {
   height: 100%;
 }
 
-@media only screen and (max-width: 768px) {
-  .Image {
-    height: auto;
+.SwiperSlide {
+
+}
+
+@media only screen and (max-width: 767px) {
+  .SwiperSlide {
+    display: flex;
+    align-items: center;
   }
+}
+
+.CloseButton {
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  display: inline-block;
+  width: 44px;
+  padding: 8px;
+  background: #fff;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.CloseButton svg {
+  width: 100%;
+  height: 100%;
 }

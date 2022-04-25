@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
+import useStore from './store';
 import { useParams, useNavigate } from 'react-router-dom';
 import { gsap } from 'gsap';
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
 gsap.registerPlugin(ScrollToPlugin);
 import styles from './App.module.css';
-
-import useStore from './store';
+import { useWindowSize, Size } from './hooks/useWindowSize';
 
 import Carousel from './components/Carousel';
 import Cursor from './components/Cursor';
@@ -18,20 +18,18 @@ import PageContent from './components/PageContent';
 
 export type CursorContent = 'More' | '←' | '→' | 'Open';
 
-type OpenedProject = number | null;
-
 function App() {
+  const windowSize: Size = useWindowSize();
+
   const {
     allProjects,
     setAllProjects,
     filteredProjects,
     setFilteredProjects,
     activeTags,
-    setActiveTags,
     openedProject,
     setOpenedProject,
     openedPage,
-    setOpenedPage,
     openedImages,
     setOpenedImages,
     isLightboxOpen,
@@ -53,13 +51,10 @@ function App() {
     resetLightbox: (e: React.MouseEvent<HTMLElement>) => {
       e.preventDefault();
 
-
-      if (e.target === e.currentTarget) {
-        setIsLightboxOpen(false);
-        setOpenedImages(null);
-        setOpenedImageIndex(0);
-        document.body.style.overflow = "auto";
-      }
+      setIsLightboxOpen(false);
+      setOpenedImages(null);
+      setOpenedImageIndex(0);
+      document.body.style.overflow = "auto";
     },
     handleCursor: (value: boolean) => setCursorIsHoveringImage(value),
     handleCursorChange: (value: 'More' | '←' | '→' | 'Open') => {
@@ -70,10 +65,10 @@ function App() {
   const carouselFunctions = {
     handleHover: (projectIndex: number | null) => setHoveredProject(projectIndex),
     handleCursor: (value: boolean) => setCursorIsHoveringImage(value),
-    handleProjectClick: (value: number, slug: string) => {
+    handleProjectClick: (slug: string) => {
+      setOpenedProject(slug);
       navigate(`/${slug}`);
-      scrollToProject(value);
-      setOpenedProject(value);
+      scrollToProject(slug);
     },
     handleCursorChange: (value: 'More' | '←' | '→' | 'Open') => {
       setCursorType(value);
@@ -89,17 +84,19 @@ function App() {
   const infoBoxFunctions = {
     resetActivateProject: () => {
       setOpenedProject(null);
+      setHoveredProject(null);
     }
   };
 
-  const scrollToProject = (projectIndex: number) => {
-    const element = document.getElementById(`project_${projectIndex}`)?.getBoundingClientRect();
+  const scrollToProject = (projectSlug: any) => {
+    const element = document.getElementById(projectSlug)?.getBoundingClientRect();
     if (element) {
       const topOffset = () => {
         return (window.innerHeight - element.height) / 2;
       };
-
-      gsap.to(window, { duration: 0.2, scrollTo: { y: `#project_${projectIndex}`, offsetY: topOffset() } });
+      if(windowSize &&  windowSize.width && windowSize.width > 767) {
+        gsap.to(window, { duration: 0.2, scrollTo: { y: `#${projectSlug}`, offsetY: topOffset() } });
+      }
     };
   };
 
@@ -137,19 +134,12 @@ function App() {
   }, [allProjects, activeTags]);
 
   useEffect(() => {
-    if(slug) {
-      console.log(allProjects);
-      console.log(allProjects.findIndex((project: any) => project.title_slug === slug));
-      const projectIndexToSet = allProjects.findIndex((project: any) => project.title_slug === slug);
-      if(projectIndexToSet) {
-        setOpenedProject(projectIndexToSet);
-        setTimeout(() => {
-          scrollToProject(projectIndexToSet);
-        }, 100);
-      };
+    if(slug && slug !== undefined) {
+      setOpenedProject(slug);
+      setTimeout(() => {
+        scrollToProject(slug);
+      }, 100);
     }
-
-    // setOpenedProject()
   }, [isLoaded, allProjects]);
 
 
@@ -160,23 +150,20 @@ function App() {
   } else {
     const listProjects = filteredProjects.map((project: any, index: number) => {
 
-      return <li id={`project_${index}`} className={styles.ProjectsItem} key={project._id}>
+      return <li id={ project.title_slug } className={styles.ProjectsItem} key={project._id}>
         <div className={styles.ProjectsItemInner}>
           <Carousel
             images={project.images}
             projectIndex={index}
             projectSlug={ project.title_slug }
             passedFunctions={carouselFunctions}
-            activeProjectIndex={openedProject}
-            isActive={openedProject === index}
           />
           <InfoBox
-            id={project._id}
+            slug={project.title_slug}
             title={project.title}
             description={project.description}
             specs={project.specs}
-            tags={project.tags}
-            isOpen={openedProject === index}
+            tags={project.tags}      
             isHovered={hoveredProject === index}
             passedFunctions={infoBoxFunctions}
           />

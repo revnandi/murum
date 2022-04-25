@@ -1,9 +1,16 @@
 import { useEffect, useRef } from 'react';
-import { gsap } from 'gsap';
+import useStore from '../store';
 import 'lazysizes';
 import 'lazysizes/plugins/attrchange/ls.attrchange';
 import 'lazysizes/plugins/blur-up/ls.blur-up';
 import styles from './Carousel.module.css';
+import throttle from 'lodash.throttle';
+import { Swiper, SwiperSlide, useSwiper } from 'swiper/react';
+import { Keyboard, EffectFade, Lazy } from 'swiper';
+import 'swiper/css';
+import 'swiper/css/effect-fade';
+import 'swiper/css/lazy';
+import 'swiper/css/keyboard';
 
 import { CursorContent } from '../App';
 
@@ -15,96 +22,42 @@ interface Props {
     handleHover: (projectIndex: number | null) => void,
     handleCursor: (value: boolean) => void,
     handleCursorChange: (value: CursorContent) => void,
-    handleProjectClick: (value: number, slug: string) => void,
+    handleProjectClick: (slug: string) => void,
     handleLightboxOpen: (images: any, indexOfClicked: number) => void,
   },
   projectIndex: number,
   projectSlug: string,
-  activeProjectIndex: number | null,
-  isActive: boolean
 };
 
-function Carousel({ images, passedFunctions, projectIndex, activeProjectIndex, projectSlug }: Props) {
-  const transitionDuration = 0.1;
+function Carousel({ images, passedFunctions, projectIndex, projectSlug }: Props) {
+  const {
+    openedProject,
+    setOpenedProject
+  } = useStore();
+
+  const throttleTime = 50;
   const imagePreviewElement = useRef<any>(null);
-  const imageElements = useRef(new Array());
-  const totalImages = useRef(0);
   const activeImage = useRef(0);
   const clickPosition = useRef<ClickPosition>('none');
-  const isActive = useRef(false);
+  const swiperRef = useRef<any>(null);
+  const swiperElementRef = useRef<any>(null);
 
   const handleClickActivate = () => {
-    passedFunctions.handleProjectClick(projectIndex, projectSlug);
+    passedFunctions.handleProjectClick(projectSlug);
   };
 
   const handleClickOpen = () => {
-    if(images && images.length > 0) {
+    if (images && images.length > 0) {
       passedFunctions.handleLightboxOpen(images, activeImage.current)
     }
   };
 
   const handleClickPrev = () => {
-    if (activeImage.current === 0) {
-      gsap.to(imageElements.current[totalImages.current - 1].querySelector('img') ,{
-        opacity: 1,
-        duration: transitionDuration,
-        pointerEvents: 'auto',
-        zIndex: 2
-      });
-      gsap.to(imageElements.current[activeImage.current].querySelector('img') ,{
-        opacity: 0,
-        duration: transitionDuration,
-        pointerEvents: 'none',
-        zIndex: 0
-      });
-      activeImage.current = totalImages.current - 1;
-    } else {
-      gsap.to(imageElements.current[activeImage.current - 1].querySelector('img') ,{
-        opacity: 1,
-        duration: transitionDuration,
-        pointerEvents: 'auto',
-        zIndex: 2
-      });
-      gsap.to(imageElements.current[activeImage.current].querySelector('img') ,{
-        opacity: 0,
-        duration: transitionDuration,
-        pointerEvents: 'none',
-        zIndex: 0
-      });
-      activeImage.current = activeImage.current - 1;
-    }
+    swiperRef.current.slidePrev();
   };
 
   const handleClickNext = () => {
-    if (activeImage.current === totalImages.current - 1) {
-      gsap.to(imageElements.current[activeImage.current].querySelector('img') ,{
-        opacity: 0,
-        duration: transitionDuration,
-        pointerEvents: 'none',
-        zIndex: 0
-      });
-      gsap.to(imageElements.current[0].querySelector('img') ,{
-        opacity: 1,
-        duration: transitionDuration,
-        pointerEvents: 'auto',
-        zIndex: 2
-      });
-      activeImage.current = 0;
-    } else {
-      gsap.to(imageElements.current[activeImage.current + 1].querySelector('img') ,{
-        opacity: 1,
-        duration: transitionDuration,
-        pointerEvents: 'auto',
-        zIndex: 2
-      });
-      gsap.to(imageElements.current[activeImage.current].querySelector('img') ,{
-        opacity: 0,
-        duration: transitionDuration,
-        pointerEvents: 'none',
-        zIndex: 0
-      });
-      activeImage.current = activeImage.current + 1;
-    }
+    swiperRef.current.slideNext();
   };
 
   const handleMouseEnter = (e: any) => {
@@ -130,7 +83,7 @@ function Carousel({ images, passedFunctions, projectIndex, activeProjectIndex, p
 
   const handleMouseMove = (e: any) => {
     passedFunctions.handleHover(projectIndex);
-    if (isActive.current) {
+    if (e.currentTarget && openedProject === projectSlug) {
       if (images && images.length > 1) {
         if (e.currentTarget.offsetWidth * 0.25 >= e.offsetX) {
           clickPosition.current = 'prev';
@@ -146,7 +99,7 @@ function Carousel({ images, passedFunctions, projectIndex, activeProjectIndex, p
         clickPosition.current = 'open';
         passedFunctions.handleCursorChange('Open');
       }
-    } else {
+    } else if(e.currentTarget && openedProject !== projectSlug) {
       clickPosition.current = 'activate';
       passedFunctions.handleCursorChange('More');
     }
@@ -172,48 +125,45 @@ function Carousel({ images, passedFunctions, projectIndex, activeProjectIndex, p
     }
   };
 
-  const addImageEventListeners = (imageElement: HTMLImageElement, index: number) => {
-    imageElement.addEventListener('mouseenter', handleMouseEnter);
-    imageElement.addEventListener('mouseleave', handleMouseLeave);
-    imageElement.addEventListener('mousemove', handleMouseMove);
-    imageElement.addEventListener('click', handleMouseClick);
-    imageElement.addEventListener('contextmenu', (e) => {
+  const addSwiperEventListeners = (swiperElement: HTMLDivElement) => {
+    swiperElement.addEventListener('mouseenter', throttle(handleMouseEnter, throttleTime));
+    swiperElement.addEventListener('mouseleave', throttle(handleMouseLeave, throttleTime));
+    swiperElement.addEventListener('mousemove', throttle(handleMouseMove, throttleTime));
+    swiperElement.addEventListener('click', throttle(handleMouseClick, throttleTime));
+    swiperElement.addEventListener('contextmenu', (e) => {
       e.preventDefault();
     });
   };
 
-  const removeImageEventListeners = (imageElement: HTMLImageElement, index: number) => {
-    if(!imageElement) return;
-    imageElement.removeEventListener('mouseenter', handleMouseEnter);
-    imageElement.removeEventListener('mouseleave', handleMouseLeave);
-    imageElement.removeEventListener('mousemove', handleMouseMove);
-    imageElement.removeEventListener('click', handleMouseClick);
-    imageElement.removeEventListener('contextmenu', (e) => {
+  const removeSwiperEventListeners = (swiperElement: HTMLDivElement) => {
+    if (!swiperElement) return;
+    swiperElement.removeEventListener('mouseenter', handleMouseEnter);
+    swiperElement.removeEventListener('mouseleave', handleMouseLeave);
+    swiperElement.removeEventListener('mousemove', handleMouseMove);
+    swiperElement.removeEventListener('click', handleMouseClick);
+    swiperElement.removeEventListener('contextmenu', (e) => {
       e.preventDefault();
     });
   };
 
   useEffect(() => {
-    if (imageElements.current.length > 0) {
+    if (swiperElementRef.current) {
+      addSwiperEventListeners(swiperElementRef.current);
+    }
 
-      gsap.to(imageElements.current[0].querySelector('img') ,{
-        opacity: 1,
-        pointerEvents: 'auto',
-        zIndex: 2
-      });
+    return () => {
+      if (swiperElementRef.current) {
+        removeSwiperEventListeners(swiperElementRef.current);
+      }
+    }
+  }, [swiperElementRef.current]);
 
-      // imageElements.current[0].style.opacity = 1;
-      totalImages.current = imageElements.current.length;
+  useEffect(() => {
 
-      imageElements.current.forEach((imageElement, index) => {
-        addImageEventListeners(imageElement, index);
-      });
-    };
-
-    if(images && images.length > 0) {
-      imagePreviewElement.current.addEventListener('mouseenter', handleMouseEnter);
-      imagePreviewElement.current.addEventListener('mouseleave', handleMouseLeave);
-      imagePreviewElement.current.addEventListener('mousemove', handleMouseMove);
+    if (images && (images.length > 0) && (openedProject !== projectSlug)) {
+      imagePreviewElement.current.addEventListener('mouseenter', throttle(handleMouseEnter, throttleTime));
+      imagePreviewElement.current.addEventListener('mouseleave', throttle(handleMouseLeave, throttleTime));
+      imagePreviewElement.current.addEventListener('mousemove', throttle(handleMouseMove, throttleTime));
       imagePreviewElement.current.addEventListener('click', handleMouseClick);
 
       imagePreviewElement.current.addEventListener('contextmenu', (e: any) => {
@@ -222,54 +172,33 @@ function Carousel({ images, passedFunctions, projectIndex, activeProjectIndex, p
     };
 
     return () => {
-      if (imageElements.current.length > 0) {
-        imageElements.current.forEach((imageElement, index) => {
-          removeImageEventListeners(imageElement, index);
-        });
-        if(!imagePreviewElement.current) return;
-        imagePreviewElement.current.removeEventListener('mousemove', handleMouseMove);
+        if (!imagePreviewElement.current) return;
+        imagePreviewElement.current.removeEventListener('mouseenter', throttle(handleMouseEnter, throttleTime));
+        imagePreviewElement.current.removeEventListener('mouseleave', throttle(handleMouseLeave, throttleTime));
+        imagePreviewElement.current.removeEventListener('mousemove', throttle(handleMouseMove, throttleTime));
+        imagePreviewElement.current.removeEventListener('click', handleMouseClick);
         imagePreviewElement.current.removeEventListener('contextmenu', (e: any) => {
           e.preventDefault();
         });
-      }
     }
-  }, []);
+  }, [imagePreviewElement.current, openedProject]);
 
-  useEffect(() => {
-    isActive.current = activeProjectIndex === projectIndex;
-    if(isActive.current) {
-      gsap.to(imagePreviewElement.current, {
-        opacity: 0,
-        pointerEvents: 'none',
-        zIndex: 0
-      });
-      gsap.to(imageElements.current[0], {
-        opacity: 1,
-        pointerEvents: 'auto',
-        zIndex: 2
-      });
-    } else {
-      gsap.to(imagePreviewElement.current, {
-        opacity: 1,
-        pointerEvents: 'auto',
-        zIndex: 1
-      });
-      gsap.to(imageElements.current[activeImage.current], {
-        opacity: 0,
-        pointerEvents: 'none',
-        zIndex: 0
-      });
-      activeImage.current = 0;
-    }
+  const swiperParams: any = {
+    modules: [Keyboard, EffectFade, Lazy],
+    effect: 'fade',
+    fadeEffect: { crossFade: true },
+    loop: true,
+    speed: 200,
+    keyboard: {
+      enabled: true,
+      onlyInViewport: false,
+    },
+  };
 
-  }, [activeProjectIndex, projectIndex])
-  
-  
-
-  if(images) {
-    const renderPreview = () =>  {
+  if (images) {
+    const renderPreview = () => {
       return (
-        <picture className={ styles.PreviewImageContainer }>
+        <picture className={ styles.PreviewImageContainer} style={{ display: openedProject === projectSlug ? 'none' : 'block' } }>
           <img
             ref={ imagePreviewElement }
             className={ [styles.PreviewImage, 'lazyload', 'blur-up'].join(' ') }
@@ -282,35 +211,51 @@ function Carousel({ images, passedFunctions, projectIndex, activeProjectIndex, p
       )
     };
 
-    const renderImages = images.map(image => {
-      return (
-        <picture
-          className={ styles.ImageContainer }
-          key={ image.value._id }
-          ref={ el => (imageElements.current = [...imageElements.current, el]) }
-        >
-          <img
-            className={ [styles.Image, 'lazyload', 'blur-up'].join(' ') }
-            src={ `https://admin.murum.studio/storage/uploads${image.value.sizes.lqip.path}` }
-            data-src={ `https://admin.murum.studio/storage/uploads${image.value.sizes.medium.path}` }
-            alt=""
-            width={ image.value.sizes.medium.width }
-            height={ image.value.sizes.medium.height }
-            onClick={ () => passedFunctions.handleProjectClick(projectIndex, projectSlug) }
-          /> 
-        </picture>)
-    });
-
     return (
-      <div className={ styles.Container }>
-        { renderPreview() }
-        { renderImages }
+      <div className={styles.Container}>
+        { openedProject !== projectSlug &&
+          renderPreview()
+        }
+        { images && openedProject === projectSlug &&     
+        <Swiper
+          // install Swiper modules
+          {...swiperParams}
+          ref={swiperElementRef}
+          onSwiper={(swiper) => swiperRef.current = swiper}
+          className={styles.Swiper}
+        >
+          {
+            images.map(image => {
+              return (
+                <SwiperSlide
+                  className={ styles.SwiperSlide }
+                  key={image.value._id}
+                >
+                  <picture
+                    className={styles.ImageContainer}
+                  >
+                    <img
+                      className={[styles.Image, 'lazyload', 'blur-up'].join(' ')}
+                      src={`https://admin.murum.studio/storage/uploads${image.value.sizes.lqip.path}`}
+                      data-src={`https://admin.murum.studio/storage/uploads${image.value.sizes.medium.path}`}
+                      alt=""
+                      width={image.value.sizes.medium.width}
+                      height={image.value.sizes.medium.height}
+                      onClick={() => passedFunctions.handleProjectClick(projectSlug)}
+                    />
+                  </picture>
+                </SwiperSlide>
+              )
+            })
+        }
+        </Swiper>
+        }
       </div>
     );
   } else {
     return <div>No images</div>
   };
-  
+
 };
 
 export default Carousel;

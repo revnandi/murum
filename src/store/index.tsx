@@ -11,8 +11,8 @@ interface PortfolioState {
   activeTags: string[];
   setActiveTags: (activeTags: string[]) => void;
 
-  openedProject: number | null;
-  setOpenedProject: (id: number | null) => void;
+  openedProject: string | null;
+  setOpenedProject: (slug: string | null) => void;
 
   openedPage: string | null;
   setOpenedPage: (slug: string | null) => void;
@@ -47,7 +47,7 @@ const useStore = create<PortfolioState>(devtools((set) => ({
   })),
 
   openedProject: null,
-  setOpenedProject: (openedProject:  number | null) =>
+  setOpenedProject: (openedProject:  string | null) =>
   set((state) => ({
     ...state,
     openedProject

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './Navigation.module.css';
 import useStore from '../store';
+import { useWindowSize, Size } from '../hooks/useWindowSize';
 import { gsap } from 'gsap';
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
 gsap.registerPlugin(ScrollToPlugin);
@@ -10,9 +11,11 @@ import NavigationItem from '../models/NavigationItem';
 function Navigation() {
   const {
     setOpenedPage,
+    setOpenedProject,
     setIsLightboxOpen
   } = useStore();
-
+  
+  const windowSize: Size = useWindowSize();
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [navigationItems, setNavigationItems] = useState([]);
@@ -40,12 +43,23 @@ function Navigation() {
 
   const handleWordmarkClick = () => {
     setIsLightboxOpen(false);
+    setOpenedProject(null);
+    setOpenedPage(null);
     navigate('/');
-    gsap.to(window, { duration: 0.2, scrollTo: { y: '#root' } });
+    setTimeout(() => {
+      gsap.to(window, { duration: 0.2, scrollTo: { y: '#root' } });
+    }, 100);
   };
 
-  const handleItemClick = () => {
+  const handleItemClick = (url: string) => {
     setIsOpen(false);
+    setOpenedProject(null);
+    setOpenedPage(url);
+    setTimeout(() => {
+      if(windowSize &&  windowSize.width && windowSize.width < 768) {
+        gsap.to(window, { duration: 0.2, scrollTo: { y: '#root' } });
+      }
+    }, 100);
   }
 
   const renderItems = () => {
@@ -60,7 +74,7 @@ function Navigation() {
                   return <li
                     className={ styles.SubItem }
                     key={ index }
-                    onClick={ () => { setOpenedPage(child.value.url); handleItemClick() } }
+                    onClick={ () => { handleItemClick(child.value.url) } }
                   >
                     { child.value.label }
                   </li>
@@ -75,7 +89,7 @@ function Navigation() {
   return (
     <nav className={ styles.Navigation }>
       <div className={ styles.Wordmark } onClick={ () => handleWordmarkClick() }>Murum</div>
-      <div className={ styles.MenuButton } onClick={ () => handleMenuButtonClick() }>
+      <div className={ [styles.MenuButton, isOpen ? styles.MenuButtonClose : ''].join(' ') } onClick={ () => handleMenuButtonClick() }>
         <span></span>
       </div>
       <ul className={ [styles.List, isOpen ? styles.OpenList : ''].join(" ") }>
