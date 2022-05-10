@@ -82,6 +82,7 @@
 .Content p, .Content ul, .Content li {
   font-size: 0.812rem;
   line-height: 1.384em;
+  color: #000;
 }
 
 @media only screen and (max-width: 767px) {
