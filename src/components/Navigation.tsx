@@ -52,8 +52,10 @@ function Navigation() {
   };
 
   const handleItemClick = (url: string) => {
+    if(windowSize &&  windowSize.width && windowSize.width < 768) {
+      setOpenedProject(null);
+    }
     setIsOpen(false);
-    setOpenedProject(null);
     setOpenedPage(url);
     setTimeout(() => {
       if(windowSize &&  windowSize.width && windowSize.width < 768) {
