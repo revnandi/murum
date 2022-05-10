@@ -103,6 +103,22 @@
   padding-right: 20px;
 }
 
+.ContentAwards a {
+  position: relative;
+  font-family: var(--font-secondary);
+  font-size: 1rem;
+  line-height: 1.333em;
+}
+
+.ContentAwards a::after {
+  font-family: system-ui;
+  content: '↗';
+  position: absolute;
+  right: -0.25em;
+  transform: translateX(100%);
+  font-size: 1rem;
+}
+
 .ContactBody {
   grid-column: 1 / span 2;
 }
