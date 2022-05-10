@@ -3,6 +3,7 @@ import useStore from '../store';
 import styles from './Filters.module.css';
 import { gsap } from 'gsap';
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
+import { useWindowSize, Size } from '../hooks/useWindowSize';
 gsap.registerPlugin(ScrollToPlugin);
 import Filter from '../models/Filter';
 
@@ -11,9 +12,11 @@ interface Props {
 }
 
 function Filters({ openedPage }: Props) {
+  const windowSize: Size = useWindowSize();
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [filterItems, setFilterItems] = useState([]);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     fetch(`https://admin.murum.studio/api/collections/get/filters?token=b4feea70ee9842384135e890083a04`)
@@ -29,6 +32,11 @@ function Filters({ openedPage }: Props) {
         }
       )
   }, []);
+
+  useEffect(() => {
+    setIsMobile(true);
+    if(windowSize &&  windowSize.width && windowSize.width > 767) setIsMobile(false);
+  }, [windowSize])
 
   const {
     activeTags,
@@ -46,6 +54,17 @@ function Filters({ openedPage }: Props) {
 
   const renderFilters = () => {
     return filterItems.map((item: Filter) => {
+      if(isMobile && item.label_slug === 'all') {
+        return (
+          <li
+            key={ item._id }
+            className={ [styles.Item, activeTags.includes(item.label_slug) ? styles.ItemActive : ''].join(' ') }
+            onClick={ () => handleClick(item.label_slug) }
+          >
+            X
+          </li>
+        );
+      }
       return <li
         key={ item._id }
         className={ [styles.Item, activeTags.includes(item.label_slug) ? styles.ItemActive : ''].join(' ') }

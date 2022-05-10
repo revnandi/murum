@@ -112,18 +112,12 @@ function Lightbox({ clickedImageIndex, passedFunctions }: Props) {
 
   const handleEsc = (event: { keyCode: number; }) => {
     if (event.keyCode === 27) {
-      console.log('escappeee');
       passedFunctions.resetLightbox();
       document.body.style.overflow = "auto";
     }
   };
 
   useEffect(() => {
-    // console.log("useEffect [clickedImageIndex ]");
-  }, [clickedImageIndex]);
-
-  useEffect(() => {
-    // console.log("useEffect []");
     currentClickedIndex.current = clickedImageIndex;
 
     window.addEventListener("keydown", handleEsc);
@@ -133,7 +127,6 @@ function Lightbox({ clickedImageIndex, passedFunctions }: Props) {
   }, []);
 
   useEffect(() => {
-    // console.log("useEffect [isLightboxOpen]");
     currentClickedIndex.current = clickedImageIndex;
     if (swiperElementRef.current) {
       addSwiperEventListeners(swiperElementRef.current);
