@@ -20,7 +20,7 @@ interface Props {
   images: any,
   clickedImageIndex: number,
   passedFunctions: {
-    resetLightbox: (e: React.MouseEvent<HTMLElement>) => void,
+    resetLightbox: () => void,
     handleCursor: (value: boolean) => void,
     handleCursorChange: (value: CursorContent) => void
   },
@@ -48,12 +48,14 @@ function Lightbox({ clickedImageIndex, passedFunctions }: Props) {
         clickPosition.current = 'next';
       }
       passedFunctions.handleCursor(true);
+      document.documentElement.style.cursor = 'none';
     }
   };
 
   const handleMouseLeave = (e: any) => {
     passedFunctions.handleCursor(false);
     clickPosition.current = 'none';
+    document.documentElement.style.cursor = 'auto';
   };
 
   const handleMouseMove = (e: any) => {
@@ -108,6 +110,14 @@ function Lightbox({ clickedImageIndex, passedFunctions }: Props) {
     });
   };
 
+  const handleEsc = (event: { keyCode: number; }) => {
+    if (event.keyCode === 27) {
+      console.log('escappeee');
+      passedFunctions.resetLightbox();
+      document.body.style.overflow = "auto";
+    }
+  };
+
   useEffect(() => {
     // console.log("useEffect [clickedImageIndex ]");
   }, [clickedImageIndex]);
@@ -115,6 +125,11 @@ function Lightbox({ clickedImageIndex, passedFunctions }: Props) {
   useEffect(() => {
     // console.log("useEffect []");
     currentClickedIndex.current = clickedImageIndex;
+
+    window.addEventListener("keydown", handleEsc);
+    return () => {
+      window.removeEventListener("keydown", handleEsc);
+    }
   }, []);
 
   useEffect(() => {

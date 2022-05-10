@@ -48,9 +48,7 @@ function App() {
   const [hoveredProject, setHoveredProject] = useState<number | null>(null);
 
   const lightBoxFunctions = {
-    resetLightbox: (e: React.MouseEvent<HTMLElement>) => {
-      e.preventDefault();
-
+    resetLightbox: () => {
       setIsLightboxOpen(false);
       setOpenedImages(null);
       setOpenedImageIndex(0);
@@ -63,7 +61,9 @@ function App() {
   };
 
   const carouselFunctions = {
-    handleHover: (projectIndex: number | null) => setHoveredProject(projectIndex),
+    handleHover: (projectIndex: number | null) => {
+      setHoveredProject(projectIndex)
+    },
     handleCursor: (value: boolean) => setCursorIsHoveringImage(value),
     handleProjectClick: (slug: string) => {
       setOpenedProject(slug);
@@ -164,7 +164,7 @@ function App() {
             description={project.description}
             specs={project.specs}
             tags={project.tags}      
-            isHovered={hoveredProject === index}
+            isHovered={ hoveredProject === index && cursorIsHoveringImage }
             passedFunctions={infoBoxFunctions}
           />
         </div>

@@ -73,36 +73,44 @@ function Carousel({ images, passedFunctions, projectIndex, projectSlug }: Props)
       clickPosition.current = 'open';
     }
     passedFunctions.handleCursor(true);
+    document.documentElement.style.cursor = 'none';
   };
 
   const handleMouseLeave = () => {
     passedFunctions.handleHover(null);
     passedFunctions.handleCursor(false);
     clickPosition.current = 'none';
+    document.documentElement.style.cursor = 'auto';
   };
 
-  const handleMouseMove = (e: any) => {
+  const handleSwiperMouseMove = (e: any) => {
     passedFunctions.handleHover(projectIndex);
-    if (e.currentTarget && openedProject === projectSlug) {
-      if (images && images.length > 1) {
-        if (e.currentTarget.offsetWidth * 0.25 >= e.offsetX) {
-          clickPosition.current = 'prev';
-          passedFunctions.handleCursorChange('←');
-        } else if (e.currentTarget.offsetWidth * 0.75 <= e.offsetX) {
-          passedFunctions.handleCursorChange('→');
-          clickPosition.current = 'next';
-        } else {
-          passedFunctions.handleCursorChange('Open');
-          clickPosition.current = 'open';
-        }
-      } else {
-        clickPosition.current = 'open';
+    if (images && images.length > 1) {
+      if (e && e.currentTarget && e.currentTarget.offsetWidth && e.currentTarget.offsetWidth * 0.25 >= e.offsetX) {
+        clickPosition.current = 'prev';
+        passedFunctions.handleCursorChange('←');
+      } else if (e && e.currentTarget && e.currentTarget.offsetWidth && e.currentTarget.offsetWidth * 0.75 <= e.offsetX) {
+        passedFunctions.handleCursorChange('→');
+        clickPosition.current = 'next';
+      } else if (
+        e &&
+        e.currentTarget &&
+        e.currentTarget.offsetWidth &&
+        (e.currentTarget.offsetWidth * 0.25 < e.offsetX && e.currentTarget.offsetWidth * 0.75 > e.offsetX)
+        ) {
         passedFunctions.handleCursorChange('Open');
+        clickPosition.current = 'open';
       }
-    } else if(e.currentTarget && openedProject !== projectSlug) {
-      clickPosition.current = 'activate';
-      passedFunctions.handleCursorChange('More');
+    } else {
+      clickPosition.current = 'open';
+      passedFunctions.handleCursorChange('Open');
     }
+  };
+
+  const handlePreviewMouseMove = (e: any) => {
+    passedFunctions.handleHover(projectIndex);
+    clickPosition.current = 'activate';
+    passedFunctions.handleCursorChange('More');
   };
 
   const handleMouseClick = (e: any) => {
@@ -128,7 +136,7 @@ function Carousel({ images, passedFunctions, projectIndex, projectSlug }: Props)
   const addSwiperEventListeners = (swiperElement: HTMLDivElement) => {
     swiperElement.addEventListener('mouseenter', throttle(handleMouseEnter, throttleTime));
     swiperElement.addEventListener('mouseleave', throttle(handleMouseLeave, throttleTime));
-    swiperElement.addEventListener('mousemove', throttle(handleMouseMove, throttleTime));
+    swiperElement.addEventListener('mousemove', throttle(handleSwiperMouseMove, throttleTime));
     swiperElement.addEventListener('click', throttle(handleMouseClick, throttleTime));
     swiperElement.addEventListener('contextmenu', (e) => {
       e.preventDefault();
@@ -139,7 +147,7 @@ function Carousel({ images, passedFunctions, projectIndex, projectSlug }: Props)
     if (!swiperElement) return;
     swiperElement.removeEventListener('mouseenter', handleMouseEnter);
     swiperElement.removeEventListener('mouseleave', handleMouseLeave);
-    swiperElement.removeEventListener('mousemove', handleMouseMove);
+    swiperElement.removeEventListener('mousemove', handleSwiperMouseMove);
     swiperElement.removeEventListener('click', handleMouseClick);
     swiperElement.removeEventListener('contextmenu', (e) => {
       e.preventDefault();
@@ -161,9 +169,9 @@ function Carousel({ images, passedFunctions, projectIndex, projectSlug }: Props)
   useEffect(() => {
 
     if (images && (images.length > 0) && (openedProject !== projectSlug)) {
-      imagePreviewElement.current.addEventListener('mouseenter', throttle(handleMouseEnter, throttleTime));
-      imagePreviewElement.current.addEventListener('mouseleave', throttle(handleMouseLeave, throttleTime));
-      imagePreviewElement.current.addEventListener('mousemove', throttle(handleMouseMove, throttleTime));
+      imagePreviewElement.current.addEventListener('mouseenter', handleMouseEnter);
+      imagePreviewElement.current.addEventListener('mouseleave', handleMouseLeave);
+      imagePreviewElement.current.addEventListener('mousemove', throttle(handlePreviewMouseMove, throttleTime));
       imagePreviewElement.current.addEventListener('click', handleMouseClick);
 
       imagePreviewElement.current.addEventListener('contextmenu', (e: any) => {
@@ -173,9 +181,9 @@ function Carousel({ images, passedFunctions, projectIndex, projectSlug }: Props)
 
     return () => {
         if (!imagePreviewElement.current) return;
-        imagePreviewElement.current.removeEventListener('mouseenter', throttle(handleMouseEnter, throttleTime));
-        imagePreviewElement.current.removeEventListener('mouseleave', throttle(handleMouseLeave, throttleTime));
-        imagePreviewElement.current.removeEventListener('mousemove', throttle(handleMouseMove, throttleTime));
+        imagePreviewElement.current.removeEventListener('mouseenter', handleMouseEnter);
+        imagePreviewElement.current.removeEventListener('mouseleave', handleMouseLeave);
+        imagePreviewElement.current.removeEventListener('mousemove', handlePreviewMouseMove);
         imagePreviewElement.current.removeEventListener('click', handleMouseClick);
         imagePreviewElement.current.removeEventListener('contextmenu', (e: any) => {
           e.preventDefault();
@@ -220,7 +228,7 @@ function Carousel({ images, passedFunctions, projectIndex, projectSlug }: Props)
         <Swiper
           // install Swiper modules
           {...swiperParams}
-          ref={swiperElementRef}
+          ref={ swiperElementRef }
           onSwiper={(swiper) => swiperRef.current = swiper}
           className={styles.Swiper}
         >
