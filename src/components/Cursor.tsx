@@ -1,15 +1,20 @@
 import React, { useEffect, useRef } from 'react';
+import useStore from '../store';
 import { gsap } from 'gsap';
 import styles from './Cursor.module.css';
 
-interface Props {
-  isHoveringImage: boolean;
-  cursorType: CursorContent;
-};
- 
-type CursorContent = 'More' | '←' | '→' | 'Open';
+import { CursorType } from '../models/CursorType';
 
-function Cursor({ isHoveringImage, cursorType }: Props) {
+interface Props {
+  currentCursorType: CursorType;
+}
+
+const Cursor = ({ currentCursorType }: Props) => {
+  const {
+    isCustomCursorVisible,
+    cursorType
+  } = useStore();
+
   const cursorRef = useRef<HTMLDivElement>(null);
 
   const addEventListeners = () => {
@@ -51,10 +56,11 @@ function Cursor({ isHoveringImage, cursorType }: Props) {
     return () => {
       removeEventListeners();
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
-    if (isHoveringImage) {
+    console.log('isCustomCursorVisible in Cursor useEffect ', isCustomCursorVisible);
+    if (isCustomCursorVisible) {
       gsap.to(cursorRef.current, {
         duration: 0.1,
         opacity: 1
@@ -65,33 +71,36 @@ function Cursor({ isHoveringImage, cursorType }: Props) {
         opacity: 0
       })
     }
-  }, [isHoveringImage])
+  }, [isCustomCursorVisible]);
 
   return (
     <div
       className={
         [
           styles.Cursor,
-          (cursorType === '←' || cursorType === '→') ? styles.CursorArrow : ''
+          (currentCursorType === 'left' || currentCursorType === 'right') ? styles.CursorArrow : ''
         ].join(' ')
       }
       ref={ cursorRef }
     >
-      { cursorType !== '←' && cursorType !== '→' &&
-        cursorType
+      { currentCursorType === 'more' &&
+        'More'
       }
-      { cursorType === '←' &&
+      { currentCursorType === 'open' &&
+        'Open'
+      }
+      { currentCursorType === 'left' &&
         <svg width="11" height="20" viewBox="0 0 11 20" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M9.85005 19L0.950049 10.2L10.0501 1" stroke="black" strokeMiterlimit="10"/>
         </svg>
       }
-      { cursorType === '→' &&
+      { currentCursorType === 'right' &&
         <svg width="11" height="19" viewBox="0 0 11 19" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M1.14995 0.5L10.05 9.3L0.949951 18.5" stroke="black" strokeMiterlimit="10"/>
         </svg>        
       }
     </div>
-  )
+  );
 };
 
 export default Cursor;

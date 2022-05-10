@@ -13,7 +13,9 @@ function InfoBox({ slug, title, description, specs, tags, isHovered, passedFunct
     <div className={ styles.TagContainer } key={ `${slug}_${index}` }>
       <div className={ styles.Tag }>{ tag }</div>
     </div>
-  )
+  );
+
+  console.log('%c RENDER Infobox','color:green;background-color:#000');
 
   return (
     <div className={ styles.Box }>

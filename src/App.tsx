@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, memo } from 'react';
 import useStore from './store';
 import { useParams, useNavigate } from 'react-router-dom';
 import { gsap } from 'gsap';
@@ -16,7 +16,7 @@ import Loader from './components/Loader';
 import Filters from './components/Filters';
 import PageContent from './components/PageContent';
 
-export type CursorContent = 'More' | '←' | '→' | 'Open';
+import { CursorType } from './models/CursorType';
 
 function App() {
   const windowSize: Size = useWindowSize();
@@ -27,13 +27,14 @@ function App() {
     filteredProjects,
     setFilteredProjects,
     activeTags,
-    openedProject,
+    hoveredProject,
+    setHoveredProject,
     setOpenedProject,
     openedPage,
     openedImages,
     setOpenedImages,
-    isLightboxOpen,
-    setIsLightboxOpen
+    openedImageIndex,
+    setOpenedImageIndex
   } = useStore();
 
   let { slug } = useParams();
@@ -42,41 +43,48 @@ function App() {
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  const [cursorIsHoveringImage, setCursorIsHoveringImage] = useState(false);
-  const [cursorType, setCursorType] = useState<CursorContent>('More')
-  const [openedImageIndex, setOpenedImageIndex] = useState<number>(0);
-  const [hoveredProject, setHoveredProject] = useState<number | null>(null);
+  const cursorIsHoveringImage = useRef<boolean>(false);
+  const currentCursorType = useRef<CursorType>('more');
+  const isCustomCursorVisible = useRef<boolean>(false);
 
   const lightBoxFunctions = {
     resetLightbox: (e: React.MouseEvent<HTMLElement>) => {
       e.preventDefault();
 
-      setIsLightboxOpen(false);
       setOpenedImages(null);
       setOpenedImageIndex(0);
-      document.body.style.overflow = "auto";
+      document.body.style.overflow = 'auto';
     },
-    handleCursor: (value: boolean) => setCursorIsHoveringImage(value),
-    handleCursorChange: (value: 'More' | '←' | '→' | 'Open') => {
-      setCursorType(value);
+    handleCursor: (value: boolean) => {
+      cursorIsHoveringImage.current = value;
+      console.log('isHoveringImage changed to ', cursorIsHoveringImage.current);
+      console.log(currentCursorType.current);
+    },
+    handleCursorChange: (value: 'more' | 'left' | 'right' | 'open' | 'none') => {
+      currentCursorType.current = value;
     },
   };
 
   const carouselFunctions = {
     handleHover: (projectIndex: number | null) => setHoveredProject(projectIndex),
-    handleCursor: (value: boolean) => setCursorIsHoveringImage(value),
+    handleCursor: (value: boolean, event: MouseEvent, functionName: string) => {
+      // console.log(event.currentTarget);
+      console.log(functionName);
+      cursorIsHoveringImage.current = value
+    },
+    handleCursorChange: (value: 'more' | 'left' | 'right' | 'open' | 'none') => {
+      console.log(value);
+      currentCursorType.current = value;
+      console.log(currentCursorType.current);
+    },
     handleProjectClick: (slug: string) => {
       setOpenedProject(slug);
       navigate(`/${slug}`);
       scrollToProject(slug);
     },
-    handleCursorChange: (value: 'More' | '←' | '→' | 'Open') => {
-      setCursorType(value);
-    },
     handleLightboxOpen: (images: any, indexOfClicked: number) => {
       setOpenedImages(images);
       setOpenedImageIndex(indexOfClicked);
-      setIsLightboxOpen(true);
       document.body.style.overflow = "hidden";
     }
   };
@@ -150,22 +158,22 @@ function App() {
   } else {
     const listProjects = filteredProjects.map((project: any, index: number) => {
 
-      return <li id={ project.title_slug } className={styles.ProjectsItem} key={project._id}>
-        <div className={styles.ProjectsItemInner}>
+      return <li id={ project.title_slug } className={ styles.ProjectsItem } key={ project._id }>
+        <div className={ styles.ProjectsItemInner }>
           <Carousel
-            images={project.images}
-            projectIndex={index}
+            images={ project.images }
+            projectIndex={ index }
             projectSlug={ project.title_slug }
-            passedFunctions={carouselFunctions}
+            passedFunctions={ carouselFunctions }
           />
           <InfoBox
-            slug={project.title_slug}
-            title={project.title}
-            description={project.description}
-            specs={project.specs}
-            tags={project.tags}      
-            isHovered={hoveredProject === index}
-            passedFunctions={infoBoxFunctions}
+            slug={ project.title_slug }
+            title={ project.title }
+            description={ project.description }
+            specs={ project.specs }
+            tags={ project.tags }      
+            isHovered={ hoveredProject === index }
+            passedFunctions={ infoBoxFunctions }
           />
         </div>
       </li>
@@ -173,21 +181,29 @@ function App() {
     );
 
     return (  
-      <div className={styles.App}>
-        <header className={styles.Header}>
+      <div className={ styles.App }>
+        <header className={ styles.Header }>
           <Navigation />
         </header>
-        <main className={styles.Main}>
+        {currentCursorType.current}
+        <main className={ styles.Main }>
           <Filters />
-          {openedPage &&
+          { openedPage &&
             <PageContent />
           }
-          <ul className={styles.ProjectsList}>
-            {listProjects}
+          <ul className={ [styles.ProjectsList, openedPage ? styles.HiddenProjectsList : ''].join(' ') }>
+            { listProjects }
           </ul>
         </main>
-        <Lightbox isOpen={isLightboxOpen} images={openedImages} clickedImageIndex={openedImageIndex} passedFunctions={lightBoxFunctions} />
-        <Cursor isHoveringImage={cursorIsHoveringImage} cursorType={cursorType} />
+        {/* <Lightbox
+          images={ openedImages }
+          clickedImageIndex={ openedImageIndex }
+          passedFunctions={ lightBoxFunctions }
+          cursorType={ currentCursorType.current }
+        /> */}
+        <Cursor 
+          currentCursorType={currentCursorType.current}
+        />
       </div>
     );
   }

@@ -28,7 +28,8 @@ function Filters() {
 
   const {
     activeTags,
-    setActiveTags
+    setActiveTags,
+    openedPage
   } = useStore();
 
   const handleClick = (tag: string) => {
@@ -52,8 +53,10 @@ function Filters() {
     })
   };
 
+  console.log('%c RENDER Filters','color:purple;background-color:#000');
+
   return (
-    <ul className={ styles.List }>
+    <ul className={ [styles.List, openedPage ? styles.HiddenList: ''].join(' ') }>
       { renderFilters() }
     </ul>
   )

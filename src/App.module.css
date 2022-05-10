@@ -228,10 +228,10 @@
   /* margin: 0 auto; */
   display: flex;
   flex-direction: column;
-  gap: 167px;
+  /* gap: 167px; */
   grid-column: 6 / span 9;
   padding: 0;
-  margin: 0 auto 167px auto;
+  margin: 0 auto 0 auto;
 }
 
 @media only screen and (max-width: 767px) {
@@ -239,6 +239,12 @@
     gap: 70px;
   } 
 }
+
+@media only screen and (max-width: 767px) {
+  .HiddenProjectsList {
+    display: none;
+  }
+} 
 
 .ProjectsItem {
   position: relative;
@@ -249,6 +255,7 @@
   /* width: 100%; */
   /* width: 65.69444444444444%; */
   width: 100%;
+  margin-bottom: 167px;
 }
 
 .ProjectsItemInner {

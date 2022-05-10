@@ -1,1 +1,1 @@
-export type CursorContent = 'More' | '←' | '→' | 'Open';
+export type CursorContent = 'more' | 'left' | 'right' | 'open';

@@ -1,10 +1,11 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, memo } from 'react';
+import useStore from '../store';
 import 'lazysizes';
 import 'lazysizes/plugins/attrchange/ls.attrchange';
 import 'lazysizes/plugins/blur-up/ls.blur-up';
 import styles from './Lightbox.module.css';
-import useStore from '../store';
 import throttle from 'lodash.throttle';
+import { useWindowSize, Size } from '../hooks/useWindowSize';
 import { Swiper, SwiperSlide, useSwiper } from 'swiper/react';
 import { Keyboard, EffectFade, Lazy } from 'swiper';
 import 'swiper/css';
@@ -12,8 +13,8 @@ import 'swiper/css/effect-fade';
 import 'swiper/css/lazy';
 import 'swiper/css/keyboard';
 
-import { CursorContent } from '../models/CursorContent';
 import { ClickPosition } from '../models/ClickPosition';
+import { CursorType } from '../models/CursorType';
 
 interface Props {
   isOpen: boolean;
@@ -22,29 +23,40 @@ interface Props {
   passedFunctions: {
     resetLightbox: (e: React.MouseEvent<HTMLElement>) => void,
     handleCursor: (value: boolean) => void,
-    handleCursorChange: (value: CursorContent) => void
+    handleCursorChange: (value: CursorType) => void,
   },
+  cursorType: CursorType;
 }
 
-function Lightbox({ clickedImageIndex, passedFunctions }: Props) {
+function Lightbox({ clickedImageIndex, passedFunctions, cursorType }: Props) {
   const throttleTime = 50;
   const {
     openedImages,
-    setOpenedImages,
     isLightboxOpen,
-    setIsLightboxOpen
+    setIsLightboxOpen,
   } = useStore();
+
+  const windowSize: Size = useWindowSize();
+
+  // const cursorType = useStore(state => state.cursorType);
 
   let currentClickedIndex = useRef(1);
   const clickPosition = useRef<ClickPosition>('none');
   const swiperRef = useRef<any>(null);
   const swiperElementRef = useRef<any>(null);
 
+  const posi = useRef<any>(null);
+  const halfRef = useRef<any>(null);
+
   const handleMouseEnter = (e: any) => {
-    if (openedImages && openedImages.length > 1) {
-      if (e.target?.width * 0.5 >= e.offsetX) {
+    if (windowSize.width && openedImages && openedImages.length > 1) {
+      const target = e.currentTarget;
+      const targetWidth = target.getBoundingClientRect().width;
+      const offset = (windowSize.width - targetWidth) / 2;
+      const calculatedCenter = (targetWidth / 2) + offset;
+      if (target && (calculatedCenter >= e.clientX)) {
         clickPosition.current = 'prev';
-      } else if (e.target?.width * 0.5 <= e.offsetX) {
+      } else if (target && (calculatedCenter <= e.clientX)) {
         clickPosition.current = 'next';
       }
       passedFunctions.handleCursor(true);
@@ -52,22 +64,27 @@ function Lightbox({ clickedImageIndex, passedFunctions }: Props) {
   };
 
   const handleMouseLeave = (e: any) => {
-    passedFunctions.handleCursor(false);
     clickPosition.current = 'none';
+    passedFunctions.handleCursor(false);
   };
 
   const handleMouseMove = (e: any) => {
-    if (openedImages && openedImages.length > 1) {
-      if (e.target?.width * 0.5 >= e.offsetX) {
+    if (windowSize.width && openedImages && openedImages.length > 1) {
+      const target = e.currentTarget;
+      const targetWidth = target.getBoundingClientRect().width;
+      const offset = (windowSize.width - targetWidth) / 2;
+      const calculatedCenter = (targetWidth / 2) + offset;
+      if (target && (calculatedCenter >= e.clientX)) {
         clickPosition.current = 'prev';
-        passedFunctions.handleCursorChange('←');
-      } else if (e.target?.width * 0.5 <= e.offsetX) {
-        passedFunctions.handleCursorChange('→');
+        passedFunctions.handleCursorChange('left');
+        passedFunctions.handleCursor(true);
+      } else if (target && (calculatedCenter <= e.clientX)) {
         clickPosition.current = 'next';
+        passedFunctions.handleCursorChange('right');
+        passedFunctions.handleCursor(true);
       }
     }
   };
-
 
   const handleClickPrev = () => {
     swiperRef.current.slidePrev();
@@ -88,24 +105,39 @@ function Lightbox({ clickedImageIndex, passedFunctions }: Props) {
     }
   };
 
+  const handleEsc = (event: { keyCode: number; }) => {
+    if (event.keyCode === 27) {
+      console.log(event.keyCode);
+      setIsLightboxOpen(false);
+      // setOpenedImages(null);
+      // setOpenedImageIndex(0);
+      document.body.style.overflow = "auto";
+    }
+  };
+
   const addSwiperEventListeners = (swiperElement: HTMLDivElement) => {
-    swiperElement.addEventListener('mouseenter', throttle(handleMouseEnter, throttleTime));
-    swiperElement.addEventListener('mouseleave', throttle(handleMouseLeave, throttleTime));
-    swiperElement.addEventListener('mousemove', throttle(handleMouseMove, throttleTime));
-    swiperElement.addEventListener('click', throttle(handleMouseClick, throttleTime));
-    swiperElement.addEventListener('contextmenu', (e) => {
-      e.preventDefault();
-    });
+    // swiperElement.addEventListener('mouseenter', handleMouseEnter, true);
+    // swiperElement.addEventListener('mouseleave', handleMouseLeave, true);
+    // swiperElement.addEventListener('mousemove', handleMouseMove, true);
+    // swiperElement.addEventListener('click', handleMouseClick, true);
+    // swiperElement.addEventListener('contextmenu', (e) => {
+    //   e.preventDefault();
+    // });
   };
 
   const removeSwiperEventListeners = (swiperElement: HTMLDivElement) => {
-    swiperElement.removeEventListener('mouseenter', handleMouseEnter);
-    swiperElement.removeEventListener('mouseleave', handleMouseLeave);
-    swiperElement.removeEventListener('mousemove', handleMouseMove);
-    swiperElement.removeEventListener('click', handleMouseClick);
-    swiperElement.removeEventListener('contextmenu', (e) => {
-      e.preventDefault();
-    });
+    // swiperElement.removeEventListener('mouseenter', handleMouseEnter);
+    // swiperElement.removeEventListener('mouseleave', handleMouseLeave);
+    // swiperElement.removeEventListener('mousemove', handleMouseMove);
+    // swiperElement.removeEventListener('click', handleMouseClick);
+    // swiperElement.removeEventListener('contextmenu', (e) => {
+    //   e.preventDefault();
+    // });
+  };
+
+  const changePosi = (value: string) => {
+    console.log('posi changed to ', posi.current);
+    posi.current = value;
   };
 
   useEffect(() => {
@@ -114,12 +146,18 @@ function Lightbox({ clickedImageIndex, passedFunctions }: Props) {
 
   useEffect(() => {
     // console.log("useEffect []");
+
     currentClickedIndex.current = clickedImageIndex;
+    window.addEventListener("keydown", handleEsc);
+    return () => {
+      window.removeEventListener("keydown", handleEsc);
+    }
   }, []);
 
   useEffect(() => {
     // console.log("useEffect [isLightboxOpen]");
     currentClickedIndex.current = clickedImageIndex;
+    console.log(swiperElementRef.current);
     if (swiperElementRef.current) {
       addSwiperEventListeners(swiperElementRef.current);
     }
@@ -144,6 +182,7 @@ function Lightbox({ clickedImageIndex, passedFunctions }: Props) {
 
   return (
     <div className={ styles.Lightbox } style={{ display: isLightboxOpen ? 'flex' : 'none' }}>
+      <div ref={ halfRef } style={{ zIndex: "8", position: "fixed", top: "50%", left: "50%", transform: "translate(-50%, -50%)", height: "40%", width: "1px", backgroundColor: "red"}}></div>
       <div
         onClick={ passedFunctions.resetLightbox }
         className={ styles.CloseButton }
@@ -189,4 +228,4 @@ function Lightbox({ clickedImageIndex, passedFunctions }: Props) {
   )
 };
 
-export default Lightbox;
+export default memo(Lightbox);

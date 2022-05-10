@@ -68,7 +68,7 @@ function PageContent() {
         renderPressItems(content.items)
       }
       { openedPage !== 'press' && openedPage !== 'contact' &&
-        <div className={ styles.Content } dangerouslySetInnerHTML={{ __html: content.content }}></div>
+        <div className={ [styles.Content, openedPage === 'awards' ? styles.ContentAwards : ''].join(' ') } dangerouslySetInnerHTML={{ __html: content.content }}></div>
       }
       { openedPage === 'contact' && content.links && (content.links.length > 0) &&
         <div className={ [styles.Content, styles.ContentContact ].join(' ') }>
