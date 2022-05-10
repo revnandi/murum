@@ -173,16 +173,18 @@ function App() {
     );
 
     return (  
-      <div className={styles.App}>
-        <header className={styles.Header}>
+      <div className={ styles.App }>
+        <header className={ styles.Header }>
           <Navigation />
         </header>
-        <main className={styles.Main}>
-          <Filters />
+        <main className={ styles.Main }>
+          <Filters
+            openedPage={ openedPage }
+          />
           {openedPage &&
             <PageContent />
           }
-          <ul className={styles.ProjectsList}>
+          <ul className={ [styles.ProjectsList, openedPage ? styles.HiddenProjectsList : ''].join(' ') }>
             {listProjects}
           </ul>
         </main>

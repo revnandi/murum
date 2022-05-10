@@ -240,6 +240,12 @@
   } 
 }
 
+@media only screen and (max-width: 767px) {
+  .HiddenProjectsList {
+    display: none;
+  }
+} 
+
 .ProjectsItem {
   position: relative;
   display: flex;

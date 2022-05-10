@@ -6,7 +6,11 @@ import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
 gsap.registerPlugin(ScrollToPlugin);
 import Filter from '../models/Filter';
 
-function Filters() {
+interface Props {
+  openedPage: string | null;
+}
+
+function Filters({ openedPage }: Props) {
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [filterItems, setFilterItems] = useState([]);
@@ -53,7 +57,7 @@ function Filters() {
   };
 
   return (
-    <ul className={ styles.List }>
+    <ul className={ [styles.List, openedPage ? styles.HiddenList: ''].join(' ') }>
       { renderFilters() }
     </ul>
   )
