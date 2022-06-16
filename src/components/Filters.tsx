@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import useStore from '../store';
-import styles from './Filters.module.css';
+import styles from './Filters.module.scss';
 import { gsap } from 'gsap';
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
 import { useWindowSize, Size } from '../hooks/useWindowSize';
@@ -61,7 +61,7 @@ function Filters({ openedPage }: Props) {
             className={ [styles.Item, activeTags.includes(item.label_slug) ? styles.ItemActive : ''].join(' ') }
             onClick={ () => handleClick(item.label_slug) }
           >
-            X
+            All
           </li>
         );
       }

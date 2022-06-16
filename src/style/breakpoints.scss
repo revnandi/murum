@@ -1,0 +1,29 @@
+@mixin breakpoint($class) {
+	@if $class == extra-small {
+		@media (max-width: 414px) { @content; }
+	}
+	
+	@if $class == small {
+		@media (max-width: 767px) { @content; }
+	}
+	
+	@else if $class == medium {
+		@media (min-width: 768px) { @content; }
+	}
+
+	@else if $class == medium-large {
+		@media (min-width: 1024px) { @content; }
+	}
+
+	@else if $class == large {
+		@media (min-width: 1248px) { @content; }
+	}
+
+	@else if $class == extra-large {
+		@media (min-width: 1440px) { @content; }
+	}
+
+	@else {
+		@warn 'Breakpoint mixin supports: extra-small, small, medium, medium-large, large, extra-large';
+	}
+}

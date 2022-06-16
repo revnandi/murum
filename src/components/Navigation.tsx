@@ -39,9 +39,15 @@ function Navigation() {
 
   const handleMenuButtonClick = () => {
     setIsOpen(!isOpen);
+    if(isOpen) {
+      document.body.classList.remove('no-overflow');
+    } else {
+      document.body.classList.add('no-overflow');
+    }
   };
 
   const handleWordmarkClick = () => {
+    document.body.classList.remove('no-overflow');
     setIsLightboxOpen(false);
     setOpenedProject(null);
     setOpenedPage(null);
@@ -52,6 +58,7 @@ function Navigation() {
   };
 
   const handleItemClick = (url: string) => {
+    document.body.classList.remove('no-overflow');
     if(windowSize &&  windowSize.width && windowSize.width < 768) {
       setOpenedProject(null);
     }

@@ -1,3 +1,5 @@
+@import '../style/breakpoints.scss';
+
 .List {
   z-index: 1;
   position: fixed;
@@ -5,38 +7,38 @@
   bottom: 0.875rem;
   display: flex;
   justify-content: flex-end;
-  gap: 1.25rem;
   grid-column: 10 / span 5;
   margin: 0;
   padding: 0;
   list-style: none;
-}
-
-@media only screen and (max-width: 767px) {
-  .List {
+  & > * + * {
+    margin-left: 1.25rem;
+  }
+  @include breakpoint(small) {
     z-index: 5;
     position: relative;
     bottom: unset;
     left: 0;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 0.5rem 0.25rem;
     width: 100%;
     padding: 20px 0;
+    & > * + * {
+      margin: 0 0 0.5rem 0.25rem;
+    }
+  }
+  @include breakpoint(extra-small) {
+    & > * + * {
+      margin: 0 0 3vw 3vw;
+    }
   }
 }
 
-@media only screen and (max-width: 414px) {
-  .List {
-    gap: 2vw 1vw;
-  }
-}
-
-@media only screen and (max-width: 767px) {
-  .HiddenList {
+.HiddenList {
+  @include breakpoint(small) {
     display: none;
   }
-} 
+}
 
 .Item {
   font-family: var(--font-primary);
@@ -45,32 +47,34 @@
   color: #000;
   text-decoration: none;
   cursor: pointer;
-}
-
-@media only screen and (max-width: 767px) {
-  .Item {
+  &:hover {
+    opacity: 0.85;
+  }
+  @include breakpoint(small) {
     font-size: 2.6vw;
     line-height: 1.157em;
+    &:first-child {
+      grid-column: 1 / span 2;
+    }
+    &:nth-child(2n+4) {
+      grid-column: 3 / span 1;
+    }
   }
-  .Item:first-child {
-    grid-column: 1 / span 2;
-  }
-  .Item:nth-child(2n+4) {
-    grid-column: 3 / span 1;
-  }
-}
-
-@media only screen and (max-width: 414px) {
-  .Item {
+  @include breakpoint(extra-small) {
     font-size: 3.7vw;
     line-height: 1.157em;
   }
 }
 
-.Item:hover {
-  opacity: 0.85;
-}
-
 .ItemActive {
  text-decoration: underline;
-} 
+}
+
+.CloseButton {
+  @include breakpoint(small) {
+    width: 2.6vw;
+  }
+  @include breakpoint(extra-small) {
+    width: 3.7vw;
+  }
+}

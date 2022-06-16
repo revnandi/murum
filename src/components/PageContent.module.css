@@ -99,15 +99,18 @@
 
 .ContentContact {
   display: grid;
-  gap: 20px;
   grid-template-columns: repeat(4, 1fr);
   padding-right: 20px;
+}
+
+.ContentContact > * + * {
+  margin: 0 0 20px 20px;
 }
 
 .ContentAwards a {
   position: relative;
   font-family: var(--font-secondary);
-  font-size: 1rem;
+  font-size: 1.125rem;
   line-height: 1.333em;
 }
 
@@ -117,7 +120,7 @@
   position: absolute;
   right: -0.25em;
   transform: translateX(100%);
-  font-size: 1rem;
+  font-size: 1.125rem;
 }
 
 .ContactBody {
@@ -170,8 +173,11 @@
 .PressItem {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  column-gap: 1.25rem;
   margin-bottom: 1.562rem;
+}
+
+.PressItem > * + * {
+  margin-left: 1.25rem;
 }
 
 .PressItem .Content {

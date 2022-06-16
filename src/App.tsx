@@ -85,7 +85,12 @@ function App() {
     resetActivateProject: () => {
       setOpenedProject(null);
       setHoveredProject(null);
-    }
+    },
+    handleProjectClick: (slug: string) => {
+      setOpenedProject(slug);
+      navigate(`/${slug}`);
+      scrollToProject(slug);
+    },
   };
 
   const scrollToProject = (projectSlug: any) => {
@@ -164,8 +169,9 @@ function App() {
             description={project.description}
             specs={project.specs}
             tags={project.tags}      
+            projectSlug={ project.title_slug }
             isHovered={ hoveredProject === index && cursorIsHoveringImage }
-            passedFunctions={infoBoxFunctions}
+            passedFunctions={ infoBoxFunctions }
           />
         </div>
       </li>

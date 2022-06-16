@@ -1,3 +1,5 @@
+@import '../style/breakpoints.scss';
+
 .Container {
   position: relative;
   /* width: 66.666%; */
@@ -74,4 +76,27 @@
 
 .Swiper {
   height: 100%;
+}
+
+.MobileControls {
+  display: none;
+  @include breakpoint(small) {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 0.5rem;
+    margin: 1rem 0;
+  }
+}
+
+.ControlButton {
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0.5rem;
+  border-radius: 50%;
+  background-color: #fff;
 }

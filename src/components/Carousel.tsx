@@ -3,7 +3,7 @@ import useStore from '../store';
 import 'lazysizes';
 import 'lazysizes/plugins/attrchange/ls.attrchange';
 import 'lazysizes/plugins/blur-up/ls.blur-up';
-import styles from './Carousel.module.css';
+import styles from './Carousel.module.scss';
 import throttle from 'lodash.throttle';
 import { Swiper, SwiperSlide, useSwiper } from 'swiper/react';
 import { Keyboard, EffectFade, Lazy } from 'swiper';
@@ -73,14 +73,14 @@ function Carousel({ images, passedFunctions, projectIndex, projectSlug }: Props)
       clickPosition.current = 'open';
     }
     passedFunctions.handleCursor(true);
-    document.documentElement.style.cursor = 'none';
+    document.documentElement.classList.add('no-cursor');
   };
 
   const handleMouseLeave = () => {
     passedFunctions.handleHover(null);
     passedFunctions.handleCursor(false);
     clickPosition.current = 'none';
-    document.documentElement.style.cursor = 'auto';
+    document.documentElement.classList.remove('no-cursor');
   };
 
   const handleSwiperMouseMove = (e: any) => {
@@ -252,6 +252,14 @@ function Carousel({ images, passedFunctions, projectIndex, projectSlug }: Props)
                       onClick={() => passedFunctions.handleProjectClick(projectSlug)}
                     />
                   </picture>
+                  <div className={ styles.MobileControls }>
+                    <svg className={ styles.ControlButton } width="11" height="20" viewBox="0 0 11 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M9.85005 19L0.950049 10.2L10.0501 1" stroke="black" strokeMiterlimit="10"/>
+                    </svg>
+                    <svg className={ styles.ControlButton } width="11" height="19" viewBox="0 0 11 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M1.14995 0.5L10.05 9.3L0.949951 18.5" stroke="black" strokeMiterlimit="10"/>
+                    </svg>
+                  </div>
                 </SwiperSlide>
               )
             })

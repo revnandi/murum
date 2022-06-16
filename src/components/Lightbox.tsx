@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import 'lazysizes';
 import 'lazysizes/plugins/attrchange/ls.attrchange';
 import 'lazysizes/plugins/blur-up/ls.blur-up';
-import styles from './Lightbox.module.css';
+import styles from './Lightbox.module.scss';
 import useStore from '../store';
 import throttle from 'lodash.throttle';
 import { Swiper, SwiperSlide, useSwiper } from 'swiper/react';
@@ -48,14 +48,14 @@ function Lightbox({ clickedImageIndex, passedFunctions }: Props) {
         clickPosition.current = 'next';
       }
       passedFunctions.handleCursor(true);
-      document.documentElement.style.cursor = 'none';
+      document.documentElement.classList.add('no-cursor');
     }
   };
 
   const handleMouseLeave = (e: any) => {
     passedFunctions.handleCursor(false);
     clickPosition.current = 'none';
-    document.documentElement.style.cursor = 'auto';
+    document.documentElement.classList.remove('no-cursor');
   };
 
   const handleMouseMove = (e: any) => {
@@ -186,6 +186,14 @@ function Lightbox({ clickedImageIndex, passedFunctions }: Props) {
                       src={`https://admin.murum.studio/storage/uploads${image.value.sizes.large.path}`}
                       alt=""
                     />
+                    <div className={ styles.MobileControls }>
+                      <svg className={ styles.ControlButton } width="11" height="20" viewBox="0 0 11 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M9.85005 19L0.950049 10.2L10.0501 1" stroke="black" strokeMiterlimit="10"/>
+                      </svg>
+                      <svg className={ styles.ControlButton } width="11" height="19" viewBox="0 0 11 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M1.14995 0.5L10.05 9.3L0.949951 18.5" stroke="black" strokeMiterlimit="10"/>
+                      </svg>
+                    </div>
                   </SwiperSlide>
                 )
               })

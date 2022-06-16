@@ -4,8 +4,10 @@ export default interface ProjectInfo {
   description: string,
   specs: string,
   tags: Array<string>,
+  projectSlug: string,
   isHovered: boolean,
   passedFunctions: {
-    resetActivateProject: () => void
+    resetActivateProject: () => void,
+    handleProjectClick: (slug: string) => void
   }
 };
